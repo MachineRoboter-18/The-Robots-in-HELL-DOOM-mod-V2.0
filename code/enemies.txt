@@ -1,3 +1,41 @@
+/* ==============================================================================
+ * DOCUMENTACIÓN DE IA TÁCTICA: FACCIÓN "OBLITERATED" (Alpha 1-02)
+ * ==============================================================================
+ * RESUMEN DE ARQUITECTURA:
+ * Este archivo define el comportamiento fundamental de los enemigos "Obliterated".
+ * Rompe con el paradigma clásico del 'A_Chase' de Doom para implementar una 
+ * máquina de estados basada en evaluación constante de distancias (Distance2D) y 
+ * comprobación de línea de visión (CheckSight).
+ * * CONCEPTOS CLAVE:
+ * 1. Conciencia Espacial: El enemigo no solo camina hacia el objetivo; evalúa 
+ * continuamente si está en rango óptimo de fuego, rango de retirada, o si 
+ * debe iniciar una maniobra de flanqueo.
+ * 2. Cerebro Post-Ataque (OBLaftershot): A diferencia de los monstruos de Doom 
+ * que se quedan quietos tras disparar, esta función obliga al actor a tomar 
+ * una decisión táctica inmediata tras cada ráfaga o disparo, basándose en 
+ * la proximidad del jugador.
+ * 3. Evasión y Recuperación (retreat_angle): Durante el reposicionamiento, el 
+ * actor memoriza su vector de movimiento, gira para disparar, y recupera su 
+ * trayectoria evasiva original, simulando tácticas de infantería (Strafing).
+ *
+ * DICCIONARIO DE FUNCIONES (ACTION VOIDS):
+ * - OBLchase: Reemplazo del 'A_Chase'. Decide entre patrullar, perseguir 
+ * agresivamente o disparar dependiendo de la visión y la distancia.
+ * - OBLchaseplayer: Persecución enfocada cuando hay confirmación visual clara.
+ * - OBLcheckproximity: Evaluador de rango crítico. Fuerza el combate cuerpo a 
+ * cuerpo (melee) o la retirada (retreat) si el jugador invade su espacio.
+ * - OBLaftershot: El núcleo lógico. Decide el siguiente estado (huir, evadir, 
+ * o disparar en movimiento) usando el parámetro 'strafe_fire' como booleano 
+ * para definir si la clase actual es capaz de disparar mientras corre.
+ * - OBLpatrol: Deambulación inactiva hasta detectar al objetivo.
+ *
+ * HERENCIA:
+ * La clase 'obliterated' es la base (abstracta). Monstruos específicos como el 
+ * 'obliterated_shotgun' heredan de ella, ajustando parámetros de salud, velocidad, 
+ * y limitando su capacidad de fuego en movimiento (strafe_fire = false) para 
+ * equilibrar su letalidad (hitscan).
+ * ============================================================================== */
+
 class obliterated : actor
 {
 	double retreat_angle;
