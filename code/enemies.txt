@@ -1,0 +1,326 @@
+class obliterated : actor
+{
+	double retreat_angle;
+	
+	default
+	{
+		health 50;
+		radius 18;
+		height 56;
+		mass 150;
+		speed 12;
+		fastspeed 13;
+		damagefactor "fire", 3.0;
+		damagefactor "none", 1.2;
+		+floorclip
+		+pushable
+		+countkill
+		+fixmapthingpos
+		-nogravity
+		PainChance 256;
+		monster;
+		
+		tag "obliterated base";
+		
+		PainSound "OBL_pain";
+		DeathSound "OBL_death";
+		AttackSound "obl_attack";
+		ActiveSound "obl_spawn";
+
+		
+	}
+	
+	action void OBLchase(double Fire_Range = 400 ) //perseguir
+	{
+		if (target == null) //si no encuentra a nadie entonces vuelve a waits
+		{
+			SetStateLabel("waits");
+			return;
+		}
+		
+		if (target.player != null) //si el target es un jugador
+		{
+			double dist = Distance2D(target);
+			
+			if (CheckSight(target)) //revisa si el target es visible
+			{
+				if (dist <= Fire_Range)//si la distancia es menor o igual a 600
+				{
+					SetStateLabel("missile");
+					return;
+				}
+				else
+				{
+					SetStateLabel("chase_player");
+					return;
+				}
+			}
+			else
+			{
+				a_chase(); //sigue moviendose aunque no vea
+				return;
+			}
+		}
+		else
+		{
+			a_cleartarget();//si el target es un monstruo lo ignora
+			SetStateLabel("waits");
+			return;
+		}
+	}
+	action void OBLchaseplayer(double Fire_Range = 350) //preseguir al jugador
+	{
+		if (target == null) return;
+		
+		double dist = Distance2D(target);
+		a_chase();
+		
+		if (dist <= Fire_Range && CheckSight(target))
+		{
+			SetStateLabel("missile");
+			return;
+		}
+	}
+	action void OBLcheckproximity(double melee_range_attack = 64, double retreat_range = 120) //revisa proximidad
+	{
+		if (target == null) return;
+		
+		double dist = Distance2D(target);
+		
+		if (dist < melee_range_attack)
+		{
+			SetStateLabel("melee");
+			return;
+		}
+		else if (dist < retreat_range)
+		{
+			SetStateLabel("retreat");
+			return;
+		}
+	}
+	action void OBLaftershot(double retreat_range = 100, double repositioning_range = 120, double Fire_Range = 350, bool strafe_fire = true) //luego de disparar
+	{
+		if (target == null)
+		{
+			SetStateLabel("see");
+			return;
+		}
+		
+		double dist = Distance2D(target);
+		
+		if (dist < retreat_range)
+		{
+			SetStateLabel("retreat");
+			return;
+		}
+		else if (dist < fire_range && dist > repositioning_range && strafe_fire)
+		{
+			setstatelabel("repositioning_fire");
+			return;
+		}
+		else if (dist > repositioning_range)
+		{
+			SetStateLabel("repositioning");
+			return;
+		}
+		else
+		{
+			SetStateLabel("see");
+			return;
+		}
+	}
+	action void OBLpatrol()
+	{
+		if (target != null && target.player != null && CheckSight(target))
+		{
+			SetStateLabel("chase_player");
+			return;
+		}
+		
+		a_chase();
+	}
+	action void Punch()//puñetaso melee
+	{
+		int damage = 10;
+		double range = 64;
+		double angle = 5;
+		
+		A_CustomMeleeAttack(12,"punch","fall_punch");
+		a_recoil(-0.5);
+	}
+	
+	
+	states
+	{
+	spawn:
+		poss a 10 a_look();
+		loop;
+		
+	waits:
+		poss a 10 a_look();
+		poss a 35 OBLpatrol();
+		loop;
+		
+	patrol:
+		poss abcd 4 OBLchase();
+		goto waits;
+		
+	see:
+		poss abcd 4 OBLchase();
+		loop;
+		
+	chase_player:
+		poss abcd 3 OBLchaseplayer();
+		loop;
+		
+	repositioning:
+		poss a 4 a_setangle(angle + random(-90, 90));
+		poss bcdabcdabcda 4 a_recoil(-3);
+		goto see;
+	
+	repositioning_fire:
+		poss a 4 {
+			a_setangle(angle + random(-90, 90));
+			retreat_angle = angle;
+		}
+		poss bcd 4 a_recoil(-3);
+		poss e 1 a_facetarget();
+		poss f 2 bright a_posattack();
+		poss e 1 a_setangle(retreat_angle);
+		poss abcd 4 a_recoil(-3);
+		poss e 1 a_facetarget();
+		poss f 2 bright a_posattack();
+		poss e 1 a_setangle(retreat_angle);
+		poss abcd 4 a_recoil(-3);
+		goto see;
+		
+	retreat:
+		poss a 4 a_recoil(1);
+		goto see;
+		
+	melee:
+		poss e 4 a_facetarget();
+		poss f 3 A_CustomMeleeAttack(12);
+		poss e 4 OBLaftershot();
+		goto see;
+		
+	missile:
+		poss e 8 a_facetarget();
+		poss f 4 bright a_posattack();
+		poss e 4 OBLaftershot();
+		goto see;
+		
+	pain:
+		poss G 3;
+		poss G 3 a_pain();
+		goto see;
+		
+	death:
+		POSS H 5;
+		POSS I 5 A_Scream;
+		POSS J 5 A_NoBlocking;
+		POSS K 5;
+		POSS L -1;
+		Stop;
+	XDeath:
+		POSS M 5;
+		POSS N 5 A_XScream;
+		POSS O 5 A_NoBlocking;
+		POSS PQRST 5;
+		POSS U -1;
+		Stop;
+	Raise:
+		POSS K 5;
+		POSS JIH 5;
+		Goto See;
+	}
+}
+
+class obliterated_shotgun : obliterated replaces ShotgunGuy
+{
+	default
+	{
+		health 45;
+		radius 18;
+		height 56;
+		mass 150;
+		speed 12;
+		fastspeed 13;
+		monster;
+		scale 0.56;
+		tag "shotguner obliterated";
+		PainSound "OBL_pain";
+		DeathSound "OBL_death";
+		AttackSound "shotguy/attack";
+		ActiveSound "obl_spawn";
+		
+		dropitem "Cy_pump_shotgun", 50;
+		dropitem "single_shotgun_shell", 75;
+		dropitem "shotgun_shell", 25;
+	}
+	states
+	{
+	spawn:
+		obsi a 6 a_look();
+		obsi bc 3 a_look();
+		obsi c 6 a_look();
+		obsi cb 3 a_look();
+		loop;
+		
+	waits:
+		obsi a 6 a_look();
+		obsi bc 3 a_look();
+		obsi c 6 OBLpatrol();
+		obsi cb 3 OBLpatrol();
+		loop;
+		
+	patrol:
+		obsw abcdabcdabcd 3 OBLchase(300);
+		goto waits;
+		
+	see:
+		obsw abcd 3 OBLchase(300);
+		loop;
+		
+	chase_player:
+		obsw abcd 2 OBLchaseplayer(250);
+		loop;
+		
+	repositioning:
+		obsw a 3 a_setangle(angle + random(-90,90));
+		obsw bcdabcd 3 a_recoil(-3);
+		goto see;
+		
+	retreat:
+		obsw a 3 a_recoil(1);
+		goto see;
+		
+	melee:
+		obsg a 2 a_facetarget();
+		obsg b 3 A_CustomMeleeAttack(12);
+		obsg a 2 OBLaftershot(150,160,280,false);
+		goto see;
+		
+	missile:
+		obsu a 6;
+		obsu b 5 a_facetarget();
+		goto actuallymissile;
+	actuallymissile:
+		obsf a 8 bright A_SposAttackUseAtkSound();
+		obsf b 5;
+		obsg aba 4;
+		obsu b 2 OBLaftershot(150,160,280,false);
+		goto see;
+		
+	pain:
+		obsp a 6 A_Pain();
+		obsp b 6 a_recoil(2);
+		goto see;
+		
+	death:
+		obsd a 5 A_Scream();
+		obsd b 5 A_NoBlocking();
+		obsd c -1;
+		stop;
+	}
+}

@@ -1,0 +1,15 @@
+// Definición del gráfico del agujero
+decal bullet_decal
+{
+    //The name of the graphic used by the decal:
+    pic DECLA0
+    //The image will be shaded slightly green:
+    shade "00 10 00" 
+    //Scaled to 25% of the image's original size:
+    x-scale 0.25
+    y-scale 0.25
+    //Will be randomly flipped along the X, or Y or both axes:
+    randomflipx
+    randomflipy
+}
+generator bullet_sparks bullet_decal

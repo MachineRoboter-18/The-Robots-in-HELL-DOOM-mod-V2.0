@@ -1,0 +1,47 @@
+//obliterated
+$random OBL_spawn {obls1 obls2 obls3 obls4 obls5}
+obls1 "sounds/npc/obliterateds/ZSPACT1"
+obls2 "sounds/npc/obliterateds/ZSPACT2"
+obls3 "sounds/npc/obliterateds/ZSPACT3"
+obls4 "sounds/npc/obliterateds/ZSPACT4"
+obls5 "sounds/npc/obliterateds/ZSPACT5"
+
+$random OBL_pain {oblp1 oblp2 oblp3 oblp4 oblp5 oblp6 oblp7 oblp8 oblp9 oblp10 oblp11}
+oblp1 "sounds/npc/obliterateds/ZSPPN1"
+oblp2 "sounds/npc/obliterateds/ZSPPN2"
+oblp3 "sounds/npc/obliterateds/ZSPPN3"
+oblp4 "sounds/npc/obliterateds/ZSPPN4"
+oblp5 "sounds/npc/obliterateds/ZSPPN5"
+oblp6 "sounds/npc/obliterateds/ZSPPN6"
+oblp7 "sounds/npc/obliterateds/ZSPPN7"
+oblp8 "sounds/npc/obliterateds/ZSPPN8"
+oblp9 "sounds/npc/obliterateds/ZSPPN9"
+oblp10 "sounds/npc/obliterateds/ZSPPN10"
+oblp11 "sounds/npc/obliterateds/ZSPPN11"
+
+$random OBL_death {obld1 obld2 obld3 obld4 obld5 obld6 obld7}
+obld1 "sounds/npc/obliterateds/ZSPDTH1"
+obld2 "sounds/npc/obliterateds/ZSPDTH2"
+obld3 "sounds/npc/obliterateds/ZSPDTH3"
+obld4 "sounds/npc/obliterateds/ZSPDTH4"
+obld5 "sounds/npc/obliterateds/ZSPDTH5"
+obld6 "sounds/npc/obliterateds/ZSPDTH6"
+obld7 "sounds/npc/obliterateds/ZSPDTH7"
+
+$random OBL_attack {obla1 obla2 obla3}
+obla1 "sounds/npc/obliterateds/ZSPSIT11"
+obla2 "sounds/npc/obliterateds/ZSPSIT10"
+obla3 "sounds/npc/obliterateds/ZSPSIT7"
+
+$random OBL_see {oblss1 oblss2 oblss3 oblss4 oblss5 oblss6 oblss7 oblss8 oblss9 oblss10 oblss11}
+oblss1 "sounds/npc/obliterateds/ZSPSIT1"
+oblss2 "sounds/npc/obliterateds/ZSPSIT2"
+oblss3 "sounds/npc/obliterateds/ZSPSIT3"
+oblss4 "sounds/npc/obliterateds/ZSPSIT4"
+oblss5 "sounds/npc/obliterateds/ZSPSIT5"
+oblss6 "sounds/npc/obliterateds/ZSPSIT6"
+oblss7 "sounds/npc/obliterateds/ZSPSIT7"
+oblss8 "sounds/npc/obliterateds/ZSPSIT8"
+oblss9 "sounds/npc/obliterateds/ZSPSIT9"
+oblss10 "sounds/npc/obliterateds/ZSPSIT10"
+oblss11 "sounds/npc/obliterateds/ZSPSIT11"

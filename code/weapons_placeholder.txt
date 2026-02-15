@@ -1,0 +1,407 @@
+// ===============================================================================
+// WEAPONS_MOCKUP.TXT — Definiciones temporales para Alpha 1-02
+// ===============================================================================
+
+// Armas Base
+class Cy_orbitary_saw : weapon_base { Default { Tag "Motosierra Orbital"; } States { Spawn: TNT1 A -1; Stop; Select: TNT1 A 1 A_Raise; Loop; Deselect: TNT1 A 1 A_Lower; Loop; Ready: TNT1 A 1 A_WeaponReady; Loop; Fire: TNT1 A 1; Goto Ready; } }
+class Cy_Rifle : weapon_base REPLACES PISTOL
+{
+	Default
+	{
+		Weapon.SelectionOrder 1900;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoGive 20;
+		Weapon.AmmoType "RIFLE_BULLETS";
+		Obituary "$OB_MPPISTOL";
+		+WEAPON.WIMPY_WEAPON
+		Inventory.Pickupmessage "$PICKUP_PISTOL_DROPPED";
+		Tag "$TAG_PISTOL";
+	}
+	States
+	{
+	Ready:
+		PISG A 1 A_WeaponReady;
+		Loop;
+	Deselect:
+		PISG A 0 A_Lower;
+		wait;
+	Select:
+		PISG A 1 A_Raise;
+		Loop;
+	Fire:
+		PISF A 2 BRIGHT A_FirePistol;
+		PISG CD 1;
+		pisg e 2 a_fireprojectile("RifleCaseSpawn",1,0,6,0);
+		PISG B 4 A_ReFire;
+		Goto Ready;
+
+ 	Spawn:
+		I3RF A -1;
+		Stop;
+	}
+}
+class Cy_pump_shotgun : weapon_base replaces shotgun
+{
+	Default
+	{
+		Weapon.SelectionOrder 1300;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoGive 8;
+		Weapon.AmmoType "Shotgun_Shell";
+		Inventory.PickupMessage "$GOTSHOTGUN";
+		Obituary "$OB_MPSHOTGUN";
+		Tag "$TAG_SHOTGUN";
+	}
+	States
+	{
+	Ready:
+		SHTG A 1 A_WeaponReady;
+		Loop;
+	Deselect:
+		SHTG A 0 A_Lower;
+		wait;
+	Select:
+		SHTG A 1 A_Raise;
+		Loop;
+	Fire:
+		SHTG A 0;
+		SHTf A 4 BRIGHT A_FireShotgun;
+		shtf b 3;
+		SHTG BC 5;
+		SHTG D 4 a_fireprojectile("shotguncasespawn",1,0,6,0);
+		SHTG CB 5;
+		SHTG A 6;
+		SHTG A 7 A_ReFire;
+		Goto Ready;
+	
+	Spawn:
+		i3sh A -1;
+		Stop;
+	}
+}
+
+class Cy_machinegun : weapon_base replaces chaingun
+{
+	Default
+	{
+		Weapon.SelectionOrder 700;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoGive 20;
+		Weapon.AmmoType "Rifle_bullets";
+		Inventory.PickupMessage "$GOTCHAINGUN";
+		Obituary "$OB_MPCHAINGUN";
+		Tag "$TAG_CHAINGUN";
+	}
+	States
+	{
+	Ready:
+		CHGG A 1 A_WeaponReady;
+		Loop;
+	Deselect:
+		CHGG A 0 A_Lower;
+		wait;
+	Select:
+		CHGG A 1 A_Raise;
+		Loop;
+	Fire:
+		CHGF A 2 BRIGHT A_FireCGun;
+		CHGG B 2 a_fireprojectile("RifleCaseSpawn",1,0,6,0);
+		CHGG B 0 A_ReFire;
+		Goto Ready;
+
+	Spawn:
+		i3mg A -1;
+		Stop;
+	}
+}
+class Cy_RPG_69 : weapon_base replaces RocketLauncher
+{
+	Default
+	{
+		Weapon.SelectionOrder 2500;
+		Weapon.AmmoUse1 1;
+		Weapon.AmmoGive1 2;
+		Weapon.AmmoType1 "rocket_ammo";
+		weapon.ammouse2 1;
+		weapon.ammogive2 4;
+		weapon.ammotype2 "missile_ammo";
+		+WEAPON.NOAUTOFIRE
+		Inventory.PickupMessage "$GOTLAUNCHER";
+		Tag "$TAG_ROCKETLAUNCHER";
+	}
+	States
+	{
+	Ready:
+		MISG A 1 A_WeaponReady;
+		Loop;
+	Deselect:
+		MISG A 0 A_Lower;
+		wait;
+	Select:
+		MISG A 1 A_Raise;
+		Loop;
+	Fire:
+		MISF A 4 BRIGHT a_fireprojectile("rpg69_rocket",random(-1,1),1);
+		MISF BCD 4;
+		MISG B 8;
+		MISG B 0 A_ReFire;
+		Goto Ready;
+	
+	altfire:
+		MIsF A 4 bright a_firerpg69missile();
+		misf b 4;
+		MIsF A 4 bright a_firerpg69missile();
+		misf b 4;
+		MIsF A 4 bright a_firerpg69missile();
+		misf b 4;
+		MIsF A 4 bright a_firerpg69missile();
+		misf bcd 4;
+		misf b 8;
+		goto ready;
+
+	Spawn:
+		i3rk A -1;
+		Stop;
+	}
+}
+class Cy_Lazergun : weapon_base { Default { Tag "Fusil Laser"; } States { Spawn: TNT1 A -1; Stop; Select: TNT1 A 1 A_Raise; Loop; Deselect: TNT1 A 1 A_Lower; Loop; Ready: TNT1 A 1 A_WeaponReady; Loop; Fire: TNT1 A 1; Goto Ready; } }
+class Cy_Lazorgun : weapon_base { Default { Tag "Lanzador BFG 7000"; } States { Spawn: TNT1 A -1; Stop; Select: TNT1 A 1 A_Raise; Loop; Deselect: TNT1 A 1 A_Lower; Loop; Ready: TNT1 A 1 A_WeaponReady; Loop; Fire: TNT1 A 1; Goto Ready; } }
+class Cy_nuke_launcher : weapon_base { Default { Tag "Lanzador Nuclear"; } States { Spawn: TNT1 A -1; Stop; Select: TNT1 A 1 A_Raise; Loop; Deselect: TNT1 A 1 A_Lower; Loop; Ready: TNT1 A 1 A_WeaponReady; Loop; Fire: TNT1 A 1; Goto Ready; } }
+
+// Armas Coleccionables (Heredan de las base para ahorrar código)
+class Cy_ak_74 : Cy_Rifle
+{
+	Default
+	{
+		Weapon.SelectionOrder 1900;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoGive 20;
+		Weapon.AmmoType "RIFLE_BULLETS";
+		Obituary "$OB_MPPISTOL";
+		+WEAPON.WIMPY_WEAPON
+		Inventory.Pickupmessage "$PICKUP_PISTOL_DROPPED";
+		Tag "$TAG_PISTOL";
+	}
+	States
+	{
+	Ready:
+		AKRG A 1 A_WeaponReady;
+		Loop;
+	Deselect:
+		AKRG A 0 A_Lower;
+		wait;
+	Select:
+		AKRG A 1 A_Raise;
+		Loop;
+	Fire:
+		AKRF A 2 BRIGHT A_FirePistol;
+		AKRG CD 1;
+		akrg e 2 a_fireprojectile("RifleCaseSpawn",1,0,6,0);
+		AKRG B 4 A_ReFire;
+		Goto Ready;
+
+ 	Spawn:
+		I3RF B -1;
+		Stop;
+	}
+}
+class Cy_fn_Fal : Cy_Rifle 
+{
+	Default
+	{
+		Weapon.SelectionOrder 1900;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoGive 20;
+		Weapon.AmmoType "RIFLE_BULLETS";
+		Obituary "$OB_MPPISTOL";
+		+WEAPON.WIMPY_WEAPON
+		Inventory.Pickupmessage "$PICKUP_PISTOL_DROPPED";
+		Tag "$TAG_PISTOL";
+	}
+	States
+	{
+	Ready:
+		FNRG A 1 A_WeaponReady;
+		Loop;
+	Deselect:
+		FNRG A 0 A_Lower;
+		wait;
+	Select:
+		FNRG A 1 A_Raise;
+		Loop;
+	Fire:
+		FNRF A 2 BRIGHT A_FirePistol;
+		FNRG CD 1;
+		FNRG E 2 a_fireprojectile("RifleCaseSpawn",1,0,6,0);
+		FNRG B 4 A_ReFire;
+		Goto Ready;
+
+ 	Spawn:
+		I3RF C -1;
+		Stop;
+	}
+}
+class Cy_Dual_shotgun : Cy_pump_shotgun {}
+class Cy_Super_shotgun : weapon_base replaces supershotgun
+{
+	Default
+	{
+		Weapon.SelectionOrder 400;
+		Weapon.AmmoUse 2;
+		Weapon.AmmoGive 8;
+		Weapon.AmmoType "shotgun_shell";
+		Inventory.PickupMessage "$GOTSHOTGUN2";
+		Obituary "$OB_MPSSHOTGUN";
+		Tag "$TAG_SUPERSHOTGUN";
+	}
+	States
+	{
+	Ready:
+		SHT2 A 1 A_WeaponReady;
+		Loop;
+	Deselect:
+		SHT2 A 0 A_Lower;
+		wait;
+	Select:
+		SHT2 A 1 A_Raise;
+		Loop;
+	Fire:
+		SHT2 I 3 A_FireShotgun2;
+		SHT2 J 4;
+		SHT2 B 7;
+		SHT2 C 7 A_CheckReload;
+		SHT2 D 7 A_OpenShotgun2;
+		SHT2 E 7;
+		SHT2 F 7 A_LoadShotgun2;
+		SHT2 G 6;
+		SHT2 H 6 A_CloseShotgun2;
+		SHT2 A 5 A_ReFire;
+		Goto Ready;
+	// unused states
+		SHT2 B 7;
+		SHT2 A 3;
+		Goto Deselect;
+
+	Spawn:
+		I3SS A -1;
+		Stop;
+	}
+}
+class Cy_Golden_Super_Shotgun : Cy_Super_shotgun 
+{
+	Default
+	{
+		Weapon.SelectionOrder 400;
+		Weapon.AmmoUse 2;
+		Weapon.AmmoGive 8;
+		Weapon.AmmoType "shotgun_shell";
+		Inventory.PickupMessage "$GOTSHOTGUN2";
+		Obituary "$OB_MPSSHOTGUN";
+		Tag "$TAG_SUPERSHOTGUN";
+	}
+	States
+	{
+	Ready:
+		SHT3 A 1 A_WeaponReady;
+		Loop;
+	Deselect:
+		SHT3 A 0 A_Lower;
+		wait;
+	Select:
+		SHT3 A 1 A_Raise;
+		Loop;
+	Fire:
+		SHT3 I 3 A_FireShotgun2;
+		SHT3 J 4;
+		SHT3 B 7;
+		SHT3 C 7 A_CheckReload;
+		SHT3 D 7 A_OpenShotgun2;
+		SHT3 E 7;
+		SHT3 F 7 A_LoadShotgun2;
+		SHT3 G 6;
+		SHT3 H 6 A_CloseShotgun2;
+		SHT3 A 5 A_ReFire;
+		Goto Ready;
+	// unused states
+		SHT3 B 7;
+		SHT3 A 3;
+		Goto Deselect;
+
+	Spawn:
+		i3ss b -1;
+		Stop;
+	}
+}
+class Cy_Advanced_shotgun : Cy_pump_shotgun {}
+class Cy_gatling : Cy_machinegun {}
+class Cy_Mg_42 : Cy_machinegun {}
+class Cy_RPG_7 : Cy_RPG_69 {}
+class Cy_light_saber : Cy_Lazergun {}
+class Cy_BFG_777k : Cy_Lazorgun {}
+class Cy_plushie : Cy_traffic_cone {}
+class Cy_traffic_cone : weapon_base 
+{
+	Default
+	{
+		Weapon.SelectionOrder 3700;
+		Weapon.Kickback 100;
+		Obituary "$OB_MPFIST";
+		Tag "$TAG_FIST";
+		+WEAPON.WIMPY_WEAPON
+		+WEAPON.MELEEWEAPON
+	}
+	States
+	{
+	Ready:
+		TRCG A 1 A_WeaponReady;
+		Loop;
+	Deselect:
+		TRCG A 0 A_Lower;
+		WAIT;
+	Select:
+		TRCG A 1 A_Raise;
+		Loop;
+	Fire:
+		TRCF AB 3;
+		TRCF c 7 a_punch();
+		trcf ba 2;
+		tnt1 a 0 a_refire();
+		goto ready;
+		
+	Spawn:
+		i3cv b -1;
+		stop;
+	}
+}
+class Cy_CV : Cy_traffic_cone
+{
+	Default
+	{
+		Weapon.SelectionOrder 3700;
+		Weapon.Kickback 100;
+		Obituary "$OB_MPFIST";
+		Tag "$TAG_FIST";
+		+WEAPON.WIMPY_WEAPON
+		+WEAPON.MELEEWEAPON
+	}
+	States
+	{
+	Ready:
+		CVFF A 1 A_WeaponReady;
+		Loop;
+	Deselect:
+		CVFF A 0 A_Lower;
+		WAIT;
+	Select:
+		CVFF A 1 A_Raise;
+		Loop;
+	Fire:
+		CVFF B 6 A_Punch;
+		CVFF B 6 A_ReFire;
+		Goto Ready;
+		
+	spawn:
+		i3cv a -1;
+		stop;
+	}
+}

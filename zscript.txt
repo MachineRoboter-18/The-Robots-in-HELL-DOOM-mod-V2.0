@@ -1,0 +1,6 @@
+#include "code/weapon_base.zs"
+#include "code/proyectile.txt"
+#include "code/weapons_placeholder.txt"
+#include "code/players.zsc"
+#include "code/fx_1.txt"
+#include "code/enemies.txt"

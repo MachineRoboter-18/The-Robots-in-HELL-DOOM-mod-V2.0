@@ -1,0 +1,19 @@
+clearplayerclasses
+addplayerclass Cyborg_Rodri_player
+
+setslot 1, Cy_orbitary_saw
+setslot 2, Cy_Rifle Cy_ak_74 Cy_fn_Fal
+setslot 3, Cy_pump_shotgun Cy_Dual_shotgun Cy_Super_shotgun Cy_Golden_Super_Shotgun Cy_Advanced_shotgun
+setslot 4, Cy_machinegun Cy_gatling Cy_Mg_42
+setslot 5, Cy_RPG_69 Cy_RPG_7
+setslot 6, Cy_Lazergun Cy_light_saber
+setslot 7, Cy_Lazorgun Cy_BFG_777k
+setslot 8, Cy_nuke_launcher
+setslot 9, Cy_traffic_cone Cy_plushie Cy_CV
+
+addkeysection "Melee" "Kick"
+addmenukey "Kick" "use spareleg"
+addmenukey "hook" hook_action
+alias hook_action "use cy_hook_launcher"
+defaultbind G hook_action
+addmenukey "grenade" "use cy_grenade"

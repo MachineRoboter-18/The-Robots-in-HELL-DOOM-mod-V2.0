@@ -1,0 +1,99 @@
+class new_rocket : Actor replaces Rocket
+{
+	Default
+	{
+		Radius 11;
+		Height 8;
+		Speed 20;
+		Damage 20;
+		Projectile;
+		+RANDOMIZE
+		+DEHEXPLOSION
+		+ROCKETTRAIL
+		+ZDOOMTRANS
+		SeeSound "weapons/rocklf";
+		DeathSound "weapons/rocklx";
+		Obituary "$OB_MPROCKET";
+	}
+	action void a_rpg69explosion(int dmg = 128, double exrad = 128)
+	{
+		a_explode(dmg, exrad);
+		a_quakeex(3,3,1,5,64,320,"world/quake", QF_RELATIVE | QF_SCALEDOWN);
+	}
+	
+	States
+	{
+	Spawn:
+		MISL A 1 Bright;
+		Loop;
+	Death:
+		MISL B 8 Bright A_Explode;
+		MISL C 6 Bright;
+		MISL D 4 Bright;
+		Stop;
+	BrainExplode:
+		MISL BC 10 Bright;
+		MISL D 10 A_BrainExplode;
+		Stop;
+	}
+}
+
+class RPG69_Rocket : new_rocket
+{
+	Default
+	{
+		Radius 8;
+		Height 5;
+		Speed 35;
+		Damage 35;
+		Projectile;
+		+RANDOMIZE
+		+DEHEXPLOSION
+		+ROCKETTRAIL
+		+ZDOOMTRANS
+		SeeSound "weapons/rocklf";
+		DeathSound "weapons/rocklx";
+		Obituary "$OB_MPROCKET";
+		scale 0.5;
+	}
+	States
+	{
+	Spawn:
+		cohe A 1 Bright;
+		Loop;
+	Death:
+		tnt1 a 0 a_rpg69explosion(192,128);
+		expb abcdefghijklmnopq 1 bright;
+		Stop;
+	}
+}
+class RPG69_missile : new_rocket 
+{
+	Default
+	{
+		Radius 6;
+		Height 4;
+		Speed 25;
+		Damage 90;
+		Projectile;
+		+RANDOMIZE
+		+DEHEXPLOSION
+		+ROCKETTRAIL
+		+ZDOOMTRANS
+		+SEEKERMISSILE
+		SeeSound "weapons/rocklf";
+		DeathSound "weapons/rocklx";
+		Obituary "$OB_MPROCKET";
+		scale 0.35;
+	}
+	States
+	{
+	Spawn:
+		cohe b 1 Bright A_SeekerMissile (8,45, sMF_LOOK);
+		Loop;
+	Death:
+		tnt1 a 0 a_rpg69explosion(96,64);
+		expb abcdefghijklmnopq 1 bright;
+		Stop;
+	}
+}

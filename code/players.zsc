@@ -1,0 +1,311 @@
+class cy_hook_launcher : custominventory
+{
+	
+	int hookticks;//cooldown para el gancho
+	
+	actor hookprojectile;
+	
+	default
+	{
+		+inventory.undroppable;
+		+inventory.untossable;
+		+inventory.unclearable;
+		+inventory.persistentpower;
+		inventory.maxamount 1;
+	}
+	
+	override void doeffect()
+	{
+		if(hookticks) hookticks--;
+		super.doeffect();
+	}
+	
+	states
+	{
+		spawn:
+			oclw a -1;
+			stop;
+			
+		pickup:
+			tnt1 a 1 {invoker.hookticks = 0;}
+			stop;
+			
+		Use:
+			TNT1 A 0 
+			{
+				if( invoker.hookprojectile )
+				{
+					invoker.hookprojectile.destroy();
+					invoker.hookprojectile = null;
+					
+					invoker.hookticks = 24;
+					return;
+				}
+				
+				if( invoker.hookticks ) return; //if it isnt 0 nothing happens
+				
+				bool dolaunch = false;
+				int layer = -8;
+					
+				while( !dolaunch && layer > -128 ) //try to start the kick state without overriding an existing overlay
+				{
+					layer--;
+					dolaunch = A_Overlay( layer, "launch_hook", true);
+				}
+					
+				if( dolaunch ) invoker.hookticks = 24; //add the amount of tics of cooldown
+			}
+			Fail;
+			
+		launch_hook:
+			//chok abcde 1;
+			//chok f 1
+			tnt1 a 0
+			{
+				invoker.owner.player.mo.a_spawnprojectile("hookprojectile",32,-1,0,CMF_AIMDIRECTION,pitch,aaptr_target);
+				//invoker.owner.player.mo.a_spawnitemEX("hookprojectile",5,-1,32,50,0,0,0,SXF_TRANSFERPITCH);
+			}
+			//chok ghij 1;
+			stop;
+	}
+}
+
+class hook_chain : actor
+{
+	default
+	{
+		radius 1;
+		height 2;
+		+noclip;
+		+FORCEXYBILLBOARD;
+		+NOGRAVITY;
+		scale 0.3;
+	}
+	action void distance_of_player()
+	{
+		actor targetplayer = players[0].mo;
+		if (targetplayer)
+		{
+		double dist = distance3d(targetplayer);
+		if (dist <= 92)
+		{
+			SetStateLabel("death");
+			return;
+		}
+		}
+	}
+	states
+	{
+	spawn:
+		hbal l 1;
+		if_player:
+		hbal l 1 distance_of_player();
+		loop;
+	death:
+		tnt1 a 0;
+		stop;
+	}
+}
+
+Class HookProjectile : Actor {
+	vector3 spawnPos;
+	int maxdistance;
+	int flytime;
+	protected double prevspeed;
+	double dragspeed;
+	property dragspeed : dragspeed;
+	property maxdistance : maxdistance;
+
+	Default {
+		HookProjectile.maxdistance 720; //Max distance the hook can cover
+		HookProjectile.dragspeed 25; //How fast the hook drags the player
+		projectile;
+		damage 0;
+		speed 50;
+		+HITTRACER //The hook gets a tracer pointer to the monster it hits
+		+BLOODLESSIMPACT
+		scale 0.8;
+		deathsound "ghook/hit";
+	}
+
+	override void PostBeginPlay() {
+		super.PostBeginPlay();
+		spawnPos = pos; //record the spawn coordinates
+	}
+
+	override void Tick() {
+    super.Tick();
+    if (isFrozen()) return;
+
+    if (target) {
+        double dist = Distance3D(target);
+        // Obtenemos la dirección normalizada manualmente para evitar errores de tipo
+        double dx = (target.pos.x - pos.x) / dist;
+        double dy = (target.pos.y - pos.y) / dist;
+        double dz = (target.pos.z - pos.z) / dist;
+        
+        for (int i = 0; i < dist; i += 12) {
+            // Pasamos el cálculo directamente en el parámetro para que no pida identificadores
+            A_SpawnParticle(
+                "Gray", 
+                SPF_FULLBRIGHT, 
+                2, 
+                4, 
+                0, 
+                dx * i, dy * i, dz * i // xoff, yoff, zoff calculados al vuelo
+            );
+        }
+    }
+
+    if (level.Vec3Diff(pos, spawnPos).length() > maxdistance && !inStateSequence(curstate,FindState("Flyback")))
+        SetStateLabel("Flyback");
+}
+
+	states {
+	Spawn:
+		oclw a 1;
+		loop;
+	// The hook hits a wall:
+	Death:
+		TnT1 A 0 {
+			A_Scream();
+			if (tracer && tracer.bSHOOTABLE) {
+				return ResolveState("FlyBack");
+			}
+			a_spawnitemex("bullet_sparks",-2,0,0,0,0,0,0,0);
+			return ResolveState(null);
+		}
+		oclw a 1 {
+			// If the hook hit something, stop the player's movement:
+			if (target && target.player) {
+				target.player.cheats |= CF_FROZEN;
+				// Now set the player's velocity to make them fly towards the wall:
+				target.vel = target.Vec3To(self).Unit() * dragspeed;
+				flytime++;
+				// Check if the player is close enough to the hook:
+				if (!target.CheckMove(pos.xy+vel.xy) || target.bNOINTERACTION || target.bNOCLIP || Distance3D(target) <= 64 || flytime > 35*10) {
+					target.player.cheats &= ~CF_FROZEN;
+					destroy(); //destroy the hook
+				}
+			}
+		}
+		wait;
+	Flyback:
+		TNT1 A 0 {
+			bNOINTERACTION = true;
+		}
+		oclw a 1 {
+			if (target) {
+				flytime++;
+				vel = Vec3To(target).Unit() * 30;
+				bool canMoveTracer = true;
+				if (tracer) {
+					Vector3 tpos = pos + (0,0, -tracer.height*0.5);
+					tpos.z = Clamp(tpos.z, tracer.floorz, tracer.ceilingz);
+					tracer.SetOrigin(tpos, true);
+					canMoveTracer = tracer.CheckMove(pos.xy+vel.xy);
+				}
+				if (Distance3D(target) <= 64 || flytime > 35*5 || (tracer && !canMoveTracer)) {
+					
+					Destroy();
+				}
+			}
+		}
+		
+		wait;
+	}
+}
+
+class Cyborg_Rodri_player : doomplayer replaces doomplayer
+{
+	
+	default
+	{
+		//stats vida
+		health 120;
+		player.maxhealth 160;
+		Player.MugShotMaxHealth 120;
+		//stats tamaño y masa
+		mass 250;
+		radius 14;
+		height 52;
+		//stats velocidad
+		speed 0.8;
+		Player.ForwardMove 1.0, 2.1;
+		player.sidemove 1.0, 2.0;
+		Player.JumpZ 12.5;
+		gravity 1.0;
+		//Player.WaterClimbSpeed 4.5;
+		//stats resistencia
+		damagefactor "Falling", 0.0; //no te hacen nada las caidas
+		damagefactor "fire", 1.4; //ante la lava de derretis
+		damagefactor "Crush", 0.8; //sos un pelin mas resistente al aplastamiento por tu endoesqueleto de titanio
+		damagefactor "Melee", 0.6; //tu chasis de acero resiste mejor los golpes
+		damagefactor "Electric", 0.3; //tu chasis es una jaula de faraday, basicamente los cortocircuitos no te afectan
+		damagefactor "none", 0.9; //aun siendo de metal sos un pelin mas duro ante basicamente todo que un marine ordinario
+		//definicion armas
+		
+		Player.WeaponSlot 1, "Cy_orbitary_saw";
+		Player.WeaponSlot 2, "Cy_Rifle", "Cy_ak_74", "Cy_fn_Fal";
+		Player.WeaponSlot 3, "Cy_pump_shotgun", "Cy_Dual_shotgun", "Cy_Super_shotgun", "Cy_Golden_Super_Shotgun", "Cy_Advanced_shotgun";
+		Player.WeaponSlot 4, "Cy_machinegun", "Cy_gatling", "Cy_Mg_42";
+		player.WeaponSlot 5, "Cy_RPG_69", "Cy_RPG_7";
+		Player.WeaponSlot 6, "Cy_Lazergun", "Cy_light_saber";
+		Player.WeaponSlot 7, "Cy_Lazorgun", "Cy_BFG_777k";
+		Player.WeaponSlot 8, "Cy_nuke_launcher";
+		Player.WeaponSlot 9, "Cy_traffic_cone", "Cy_plushie", "Cy_CV";
+		
+		/*
+		armas de la rueda de armas ordinarias:
+		prefijo Cy_:
+		orbitary saw, rifle, pump_shotgun, dual_shotgun, super_shotgun, machinegun, gatling, RPG-69, lazergun, lazorgun (BFG 7000)
+		armas coleccionables:
+		prefijo Cy_:
+		ak-74, fn-fal, golden_super_shotgun, advanced_shotgun, mg-42, rpg-7, light-saber, BFG777k
+		armas meme o coleccionable menos raros:
+		traffic_cone, plushie (un peluche), CV (un cv hay que miedo, una pala ahhhhh)
+		*/
+		
+		//definicion items iniciales
+		player.startitem "Cy_rifle", 1;
+		player.startitem "rifle_bullets", 30;
+		player.startitem "rifle_ammo", 30;
+		player.startitem "shotgun_ammo", 8;
+		player.startitem "dual_shotgun_ammo", 12;
+		player.startitem "super_shotgun_ammo", 2;
+		player.startitem "machinegun_ammo", 90;
+		player.startitem "lazergun_ammo", 30;
+		player.startitem "cy_hook_launcher", 1;
+		
+		scale 0.58;
+		player.crouchsprite "cyrs";
+	}
+	
+	
+	States
+	{
+	Spawn:
+		cyri A -1;
+		Loop;
+	See:
+		cyrw ABCD 4;
+		Loop;
+	Missile:
+		cyrf a 4 bright;
+		cyrf bcd 4;
+		Goto Spawn;
+	Melee:
+		cyrf d 6 ;
+		Goto Missile;
+	Pain:
+		cyrp a 4;
+		cyrp b 4 A_Pain;
+		Goto Spawn;
+	Death:
+		cyrd a 6;
+		cyrd b 6 A_PlayerScream;
+		cyrd c 6 A_NoBlocking;
+		cyrd d -1;
+		Stop;
+	}
+}
