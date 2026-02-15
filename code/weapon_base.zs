@@ -470,6 +470,7 @@ class rifle_bullet_clip : Rifle_bullets
 		inventory.amount 5;
 		inventory.pickupmessage "$got_pick_bullet_clip";
 		inventory.pickupsound "items/bulletpick";
+		+INVENTORY.IGNORESKILL
 	}
 	states
 	{
@@ -486,6 +487,7 @@ class single_Shotgun_Shell : Shotgun_Shell
 		inventory.amount 1;
 		inventory.pickupmessage "$got_pick_single_shell";
 		inventory.pickupsound "items/singleshellpick";
+		+INVENTORY.IGNORESKILL
 	}
 	states
 	{
