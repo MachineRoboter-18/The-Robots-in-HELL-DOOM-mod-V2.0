@@ -1,0 +1,58 @@
+class armor_parts : BasicArmorBonus replaces ArmorBonus
+{
+	Default
+	{
+		Radius 20;
+		Height 16;
+		Inventory.Pickupmessage "$GOTARMBONUS";
+		Inventory.Icon "i1ara0";
+		Armor.Savepercent 25;
+		Armor.Saveamount 4;
+		Armor.Maxsaveamount 400;
+		+COUNTITEM
+		+INVENTORY.ALWAYSPICKUP
+	}
+	States
+	{
+	Spawn:
+		i4ar A -1;
+		stop;
+	}
+}
+class grey_armor : BasicArmorPickup replaces greenarmor
+{
+	default
+	{
+		Radius 20;
+		Height 16;
+		Inventory.Pickupmessage "$GOTARMOR";
+		Inventory.Icon "i1arb0";
+		Armor.SavePercent 50;
+		Armor.SaveAmount 150;
+	}
+	states
+	{
+	spawn:
+		i4ar b -1;
+		stop;
+	}
+}
+
+class black_armor : BasicArmorPickup replaces bluearmor
+{
+	default
+	{
+		Radius 20;
+		Height 16;
+		Inventory.Pickupmessage "$GOTMEGA";
+		Inventory.Icon "i1arc0";
+		Armor.Savepercent 80;
+		Armor.Saveamount 350;
+	}
+	states
+	{
+	spawn:
+		i4ar c -1;
+		stop;
+	}
+}

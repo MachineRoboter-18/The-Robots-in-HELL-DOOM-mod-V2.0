@@ -405,8 +405,8 @@ class rocket_box_spawner : actor replaces rocketbox
 	states
 	{
 	spawn:
-		tnt1 a 1 a_jump(200,"spawn1","spawn2");
-		goto spawn1;
+		tnt1 a 1 a_jump(255,"spawn1","spawn2");
+		loop;
 		
 	spawn1:
 		tnt1 a 1 a_spawnitem("rocket_ammo_box");
