@@ -56,3 +56,56 @@ class black_armor : BasicArmorPickup replaces bluearmor
 		stop;
 	}
 }
+
+class Health_bonus : Health replaces HealthBonus
+{
+	Default
+	{
+		+COUNTITEM
+		+INVENTORY.ALWAYSPICKUP
+		Inventory.Amount 2;
+		Inventory.MaxAmount 400;
+		Inventory.PickupMessage "$GOTHTHBONUS";
+	}
+	States
+	{
+	Spawn:
+		i4he ddefgggfed 6;
+		loop;
+	}
+}
+	
+// Stimpack -----------------------------------------------------------------
+
+class little_stimpack : Health replaces Stimpack
+{
+	Default
+	{
+		Inventory.Amount 15;
+		Inventory.PickupMessage "$GOTSTIM";
+	}
+	States
+	{
+	Spawn:
+		i4he A -1;
+		Stop;
+	}
+}
+
+// Medikit -----------------------------------------------------------------
+
+class big_stimpack : Health replaces Medikit
+{
+	Default
+	{
+		Inventory.Amount 30;
+		Inventory.PickupMessage "$GOTMEDIKIT";
+		Health.LowMessage 25, "$GOTMEDINEED";
+	}
+	States
+	{
+	Spawn:
+		i4he b -1;
+		Stop;
+	}
+}
