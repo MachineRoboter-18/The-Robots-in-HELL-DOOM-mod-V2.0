@@ -243,6 +243,7 @@ class Cyborg_Rodri_player : doomplayer replaces doomplayer
 		damagefactor "Melee", 0.6; //tu chasis de acero resiste mejor los golpes
 		damagefactor "Electric", 0.3; //tu chasis es una jaula de faraday, basicamente los cortocircuitos no te afectan
 		damagefactor "none", 0.9; //aun siendo de metal sos un pelin mas duro ante basicamente todo que un marine ordinario
+		damagefactor "slam", 0.0; //tu haces un slam, esto no te afecta pero al resto si
 		//definicion armas
 		
 		Player.WeaponSlot 1, "Cy_orbitary_saw";
@@ -280,6 +281,90 @@ class Cyborg_Rodri_player : doomplayer replaces doomplayer
 		scale 0.58;
 		player.crouchsprite "cyrs";
 	}
+	/*
+	bool on_floor = (pos.z <= floorz + 4.0 || player.ONGROUND || );
+	bool double_jump_realized;
+	*/
+	
+	bool double_jump_realized;
+	bool on_slam_fall;
+	bool is_sliding;
+	double slide_direction;
+	
+	override void tick()
+	{
+		super.tick();
+		
+		bool on_floor = (pos.z <= floorz + 16.0 || (player && player.onground));
+		
+		
+		if(!on_floor && !double_jump_realized && (player.cmd.buttons & BT_JUMP) && !(player.oldbuttons & BT_JUMP))
+		{
+			vel.z = 12.5;
+			
+			vector2 trust = angletovector(angle, 5.0);
+			vel.x += trust.x;
+			vel.y += trust.y;
+			
+			double_jump_realized = true;
+		}
+		if (on_floor && double_jump_realized){ double_jump_realized = false;}
+		
+		if (on_floor && !is_sliding && (player.cmd.buttons & BT_CROUCH) && !(player.oldbuttons & BT_CROUCH))
+		{
+			is_sliding = true;
+			slide_direction = angle;
+		}
+
+		// 2. MANTENIMIENTO DEL SLIDE (Persiste en aire y al caer)
+		if (is_sliding)
+		{
+			// Si soltamos Crouch, el slide se muere SIEMPRE
+			if (!(player.cmd.buttons & BT_CROUCH))
+			{
+				is_sliding = false;
+			}
+			else 
+			{
+            // Mientras mantengas Crouch, forzamos la dirección (Incluso en el aire si querés)
+            // Si querés que en el aire no tenga propulsión pero mantenga el estado:
+				if (on_floor)
+				{
+					Vector2 slide_vel = angletovector(slide_direction, 25.0);
+					vel.x = slide_vel.x;
+					vel.y = slide_vel.y;
+				}
+
+				// Slide Jump: Si saltamos, el slide NO se apaga (según tu regla)
+				if (on_floor && (player.cmd.buttons & BT_JUMP) && !(player.oldbuttons & BT_JUMP))
+				{
+					vel.z = 15;
+					// Opcional: un pequeño boost extra al saltar
+				}
+			}
+		}
+
+		// 3. LÓGICA DE SLAM (Solo si NO estamos en slide y estamos en el aire)
+		if (!on_floor && !is_sliding)
+		{
+			// Solo se activa si detecta una pulsación NUEVA en el aire
+			if ((player.cmd.buttons & BT_CROUCH) && !(player.oldbuttons & BT_CROUCH))
+			{
+				vel.z = -40;
+				vel.x *= 0.1;
+				vel.y *= 0.1;
+				on_slam_fall = true;
+			}
+		}
+		if (on_slam_fall && on_floor)
+		{
+			a_explode(64,128,XF_THRUSTZ , false, 0, 0, 0,"bulletpuff", "slam");
+			a_quakeex(3,3,3,15,0,128,"world/quake",QF_RELATIVE | QF_SCALEDOWN);
+			on_slam_fall = false;
+		}
+		
+	}
+	
 	
 	
 	States

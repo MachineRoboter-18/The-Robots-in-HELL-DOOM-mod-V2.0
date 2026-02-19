@@ -1,0 +1,66 @@
+list of the changelog published in the commits of GitHub
+
+version V2.0 refers to the current development version of TRH mod.
+alpha 1-02 refers to the alpha state of the version development; "-02" refers to the second iteration of the .pk3 file directory.
+#### or any other number refers to the commit uploaded to GitHub; for example, 0001 is the initial upload and 0002 is the latest addition to the project.
+
+and now the changelog:
+
+#0001 (14/2/2026)
+Initial upload.
+Added in Alpha 1-02 (v00001):
+    Weapon Base: All ammo classes replaced; ammo available in different quantities; implemented internal weapon magazine logic.
+    Players: Added Cyborg_Rodri_Player and all Grappling Hook logic.
+    Weapon Placeholders: Beta versions of weapons (pre-Alpha 2 logic). Includes: Pump_Shotgun, Super_Shotgun, Golden_Super_Shotgun, Machinegun, Rifle (all 3 variants), RPG_69, CV, and Traffic_Cone.
+    Enemies: Base code for the Obliterated faction and the Obliterated_Shotgun actor.
+    FX: Code for basic effects such as shell casings and bullet sparks (Bullet_Spark).
+
+#0002 (14/2/2026)
+Documentation: Obliterateds.
+Added documentation for the Obliterated class in enemies.txt; written with assistance from Gemini AI. 
+
+#0003 (15/2/2026)
+Added Obliterated Rifle sprites.
+Added 100 images (192x96px) for the new enemy's sprite set. 
+
+#0004 (15/2/2026)
+Added Obliterated drop logic and Obliterated Rifle AI. 
+
+#0005 (15/2/2026)
+Added weapons and logic:
+    * Dual Shotgun sprites added.
+    * Gatling sprites added.
+    * Dual Shotgun logic: Alternating fire rate between left and right barrels.
+    * Gatling logic: Dual-state machine with spin-up, spin-down, and AltFire toggle for instant firing.
+    * Weapon class organization: Reordered source code to group all shotgun variants (Pump, SSG, Golden, Dual) before heavy weaponry.
+
+#0006 (17/2/2026)
+Armor System Update:
+    * Added Armor Bonus sprite and logic.
+    * GreenArmor replaced with Grey_Armor; BlueArmor replaced with Black_Armor.
+    * Updated armor sprites.
+    * Modified rocket spawns: 50/50 chance to spawn Rocket_Ammo_Box or Missile_Ammo_Box.
+
+#0007 (17/2/2026)
+Health System Update:
+    * Added Health Bonus, Stimpack, and Medikit replacements to support the 400HP cap.
+
+**** HISTORICAL CHANGELOG ****
+History of "Cyborg Rodri Mod" evolving into "The Robots in HELL" (TRH).
+
+(Era de dibujos: v1.0 - v1.7.1)
+v1.0: Set de armas base y mugshots. Errores por falta de KEYCONF.
+v1.1: Reinicio desde cero; se añade KEYCONF y sprites del fusil.
+v1.2: Se añade Pump_Shotgun y puños.
+v1.3: Se añade SuperShotgun y Machinegun.
+v1.4: Sonidos nuevos, zoom en rifle y drops custom para enemigos base.
+v1.5: Pistola, primer lanzacohetes, BulletPuffs y tracers. Última versión en .wad.
+v1.6: Migración a .pk3. Disparo secundario (misiles) y motosierra.
+v1.6 (Beta 2): Renders 3D iniciales para rifle y escopeta. Zoom en RPG y ráfagas en rifle.
+v1.7: Rework de sprites. Humo en cohetes y primer NPC (Zombie con pistola).
+
+(Era Cinema 4D: v1.7.5 - Presente)
+v1.8: Rework total a renders 3D. Primera versión con sprites del jugador en 3ra persona.
+v1.8.2: Ítems en 3D, mapa de testeo, sistema de armaduras y 3 NPCs (Robert y variantes de Minigun).
+v1.9 (Beta 1): Integración de ZScript, Tilt++, Chasecam y JPMobility. Experimentos con IA tipo Brutal Doom. 
+v1.9 (Beta 2): Enemigos Obliterated y Obliterated_Shotgun, modelos 3D para ítems y actualización de mapa de pruebas.

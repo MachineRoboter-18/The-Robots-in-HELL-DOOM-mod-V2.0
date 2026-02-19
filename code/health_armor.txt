@@ -7,7 +7,7 @@ class armor_parts : BasicArmorBonus replaces ArmorBonus
 		Inventory.Pickupmessage "$GOTARMBONUS";
 		Inventory.Icon "i1ara0";
 		Armor.Savepercent 25;
-		Armor.Saveamount 4;
+		Armor.Saveamount 2;
 		Armor.Maxsaveamount 400;
 		+COUNTITEM
 		+INVENTORY.ALWAYSPICKUP
@@ -27,7 +27,7 @@ class grey_armor : BasicArmorPickup replaces greenarmor
 		Height 16;
 		Inventory.Pickupmessage "$GOTARMOR";
 		Inventory.Icon "i1arb0";
-		Armor.SavePercent 50;
+		Armor.SavePercent 35;
 		Armor.SaveAmount 150;
 	}
 	states
@@ -46,8 +46,8 @@ class black_armor : BasicArmorPickup replaces bluearmor
 		Height 16;
 		Inventory.Pickupmessage "$GOTMEGA";
 		Inventory.Icon "i1arc0";
-		Armor.Savepercent 80;
-		Armor.Saveamount 350;
+		Armor.Savepercent 60;
+		Armor.Saveamount 250;
 	}
 	states
 	{
@@ -70,7 +70,7 @@ class Health_bonus : Health replaces HealthBonus
 	States
 	{
 	Spawn:
-		i4he ddefgggfed 6;
+		i4he ddefgggfed 6 bright;
 		loop;
 	}
 }
@@ -81,7 +81,7 @@ class little_stimpack : Health replaces Stimpack
 {
 	Default
 	{
-		Inventory.Amount 15;
+		Inventory.Amount 10;
 		Inventory.PickupMessage "$GOTSTIM";
 	}
 	States
@@ -98,7 +98,7 @@ class big_stimpack : Health replaces Medikit
 {
 	Default
 	{
-		Inventory.Amount 30;
+		Inventory.Amount 25;
 		Inventory.PickupMessage "$GOTMEDIKIT";
 		Health.LowMessage 25, "$GOTMEDINEED";
 	}
