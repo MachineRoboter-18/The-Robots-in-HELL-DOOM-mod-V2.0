@@ -45,6 +45,21 @@ Armor System Update:
 Health System Update:
     * Added Health Bonus, Stimpack, and Medikit replacements to support the 400HP cap.
 
+#0008 (19/2/2026)
+added mechanics and balance
+	*change the absorbsion level of both armors, 35% to grey armor and 60% to Black armor
+	*added double jump, slide, and groundslam
+	*added advanced shotgun sprites and logic
+	*added spidermind mastermind sprites from brutal doom
+
+actual version of mod V2.0 alpha 1-02 0008
+
+#0007 (20/2/2026)
+added FX
+	*Added ground-slam sound and visual effect
+	*added slide sound
+	*added players.zsc documentation
+
 **** HISTORICAL CHANGELOG ****
 History of "Cyborg Rodri Mod" evolving into "The Robots in HELL" (TRH).
 

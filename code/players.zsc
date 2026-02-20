@@ -290,12 +290,13 @@ class Cyborg_Rodri_player : doomplayer replaces doomplayer
 	bool on_slam_fall;
 	bool is_sliding;
 	double slide_direction;
+	bool slide_sound_active;
 	
 	override void tick()
 	{
 		super.tick();
 		
-		bool on_floor = (pos.z <= floorz + 16.0 || (player && player.onground));
+		bool on_floor = (pos.z <= floorz + 4.0 || (player && player.onground));
 		
 		
 		if(!on_floor && !double_jump_realized && (player.cmd.buttons & BT_JUMP) && !(player.oldbuttons & BT_JUMP))
@@ -323,23 +324,33 @@ class Cyborg_Rodri_player : doomplayer replaces doomplayer
 			if (!(player.cmd.buttons & BT_CROUCH))
 			{
 				is_sliding = false;
+				if (slide_sound_active) { A_StopSound(7); slide_sound_active = false; }
 			}
 			else 
 			{
-            // Mientras mantengas Crouch, forzamos la dirección (Incluso en el aire si querés)
-            // Si querés que en el aire no tenga propulsión pero mantenga el estado:
 				if (on_floor)
 				{
+					if (!slide_sound_active)
+					{
+						a_startsound("slide",7,CHANF_LOOPING ,1.0);
+						slide_sound_active = true;
+					}
 					Vector2 slide_vel = angletovector(slide_direction, 25.0);
 					vel.x = slide_vel.x;
 					vel.y = slide_vel.y;
 				}
+				else
+				{
+					if(slide_sound_active)
+					{
+						A_StopSound(7);
+						slide_sound_active = false;
+					}
+				}
 
-				// Slide Jump: Si saltamos, el slide NO se apaga (según tu regla)
 				if (on_floor && (player.cmd.buttons & BT_JUMP) && !(player.oldbuttons & BT_JUMP))
 				{
 					vel.z = 15;
-					// Opcional: un pequeño boost extra al saltar
 				}
 			}
 		}
@@ -360,6 +371,8 @@ class Cyborg_Rodri_player : doomplayer replaces doomplayer
 		{
 			a_explode(64,128,XF_THRUSTZ , false, 0, 0, 0,"bulletpuff", "slam");
 			a_quakeex(3,3,3,15,0,128,"world/quake",QF_RELATIVE | QF_SCALEDOWN);
+			a_spawnitemex("Ground_Slam",0,0,2,0,0,0,0);
+			a_playsound("Ground_Slam_SFX",chan_auto,1);
 			on_slam_fall = false;
 		}
 		
@@ -394,3 +407,51 @@ class Cyborg_Rodri_player : doomplayer replaces doomplayer
 		Stop;
 	}
 }
+
+
+
+
+/* =================================================================================================
+DOCUMENTACIÓN TÉCNICA - ARCHIVO: players.txt
+PROYECTO: The Robots in HELL Doom mod (v2.0 Alpha 1-02)
+
+DESCRIPCIÓN GENERAL:
+Este archivo contiene las definiciones de las clases relacionadas con la movilidad avanzada
+del Cyborg Rodri. Implementa el sistema de gancho, la cadena visual, y la sobreescritura
+del Tick() para manejar físicas frame a frame.
+
+DESGLOSE DE CLASES Y LÓGICA:
+
+1. CLASE: cy_hook_launcher (custominventory)
+   - Rol: Gestiona el cooldown y el disparo del gancho sin soltar el arma actual.
+   - Lógica: Usa 'hookticks' como temporizador. Al usar el item, verifica si ya hay un gancho activo 
+     ('hookprojectile'). Si lo hay, lo destruye y aplica cooldown (24 tics). Si no, busca una capa de 
+     overlay libre (hasta -128) para reproducir la animación sin interrumpir el arma y dispara el proyectil.
+
+2. CLASE: hook_chain (actor)
+   - Rol: Eslabones puramente visuales generados por el proyectil del gancho.
+   - Lógica: Flotan sin gravedad ni colisión (+noclip). Tienen un Action 'distance_of_player' que 
+     destruye el eslabón si está a menos de 92 unidades del jugador para evitar obstruir la cámara.
+
+3. CLASE: HookProjectile (Actor)
+   - Rol: Proyectil físico que viaja, se clava y arrastra al jugador.
+   - Atributos: maxdistance (720 unidades límite), dragspeed (25 vel. de tracción).
+   - Lógica de Vuelo (Tick): Dibuja un rastro de partículas calculando el vector normalizado hacia 
+     el jugador. Si supera la maxdistance, aborta y vuelve ('Flyback').
+   - Lógica de Impacto: Si golpea una pared, paraliza temporalmente los inputs del jugador (CF_FROZEN) 
+     y modifica su velocidad ('target.vel') para empujarlo hacia el gancho. Si golpea un enemigo 
+     (bSHOOTABLE), el gancho vuelve arrastrando al enemigo consigo.
+
+4. CLASE: Cyborg_Rodri_player (doomplayer)
+   - Rol: Clase base del jugador.
+   - Stats: Salud base 120 (max 160). Alta masa (250) y velocidad reducida (0.8). Resistencias ajustadas 
+     por lore (inmune a daño de caída por amortiguadores, débil al fuego, resistente a electricidad).
+   - Motor Físico (Tick): Sobreescribe el tick base para ejecutar 35 veces por segundo:
+     a) Físicas de suelo: Usa una tolerancia de +16.0 en Z para evitar cortes en escaleras.
+     b) Doble Salto: Aplica 12.5 de impulso vertical y un pequeño empuje direccional extra.
+     c) Slide: Detecta el agacharse en el suelo. Inicia el estado 'is_sliding'. Mientras dure, 
+        fija la velocidad horizontal, reproduce el sonido en el CANAL 7 (looping) y apaga el sonido 
+        si el jugador salta (Slide Jump) o cae, reactivándolo automáticamente al volver a tocar suelo.
+     d) Ground Slam: Si se presiona agachar en el aire, fuerza vel.z a -40. Al tocar el suelo, genera 
+        una explosión (A_Explode, 128 radio), tiembla la cámara (A_QuakeEx) y spawnea el modelo 3D 'Ground_Slam'.
+================================================================================================= */

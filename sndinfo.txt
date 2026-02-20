@@ -45,3 +45,11 @@ oblss8 "sounds/npc/obliterateds/ZSPSIT8"
 oblss9 "sounds/npc/obliterateds/ZSPSIT9"
 oblss10 "sounds/npc/obliterateds/ZSPSIT10"
 oblss11 "sounds/npc/obliterateds/ZSPSIT11"
+
+
+
+//player
+
+Ground_Slam_SFX "sounds/players/movement-sistem/ground_slam.ogg"
+$limit Ground_Slam_SFX 2
+Slide "sounds/players/movement-sistem/slide.ogg"

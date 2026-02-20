@@ -28,6 +28,26 @@ class Bullet_sparks : BulletPuff replaces BulletPuff
     }
 }
 
+//ground slam effect 1
+class Ground_Slam : actor
+{
+	default
+	{
+		+noblockmap
+		+CLIENTSIDEONLY
+		+NOGRAVITY
+        +DONTSPLASH
+	}
+	states
+	{
+	spawn:
+		SLAM ABCDE 2;
+		slam FGH 3 a_fadeout(0.004);
+		slam IJ 4 a_fadeout(0.004);
+		stop;
+	}
+}
+
 // Casquillo de bala (Rifle/Machinegun)
 class balavacia : Actor
 {
