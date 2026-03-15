@@ -2,6 +2,6 @@
 #include "code/proyectile.txt"
 #include "code/weapons_placeholder.txt"
 #include "code/health_armor.txt"
-#include "code/players.zsc"
+#include "code/players.txt"
 #include "code/fx_1.txt"
 #include "code/enemies.txt"

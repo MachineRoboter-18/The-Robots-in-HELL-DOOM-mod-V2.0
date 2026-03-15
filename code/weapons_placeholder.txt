@@ -3,6 +3,99 @@
 // ===============================================================================
 
 // Armas Base
+class cy_punch : custominventory
+{
+	int punch_cooldown; //cooldown entre golpes
+	
+	default
+	{
+		+INVENTORY.UNDROPPABLE;
+		+INVENTORY.UNCLEARABLE;
+		+INVENTORY.UNTOSSABLE;
+		Inventory.MaxAmount 1;
+	}
+	
+	override void doeffect()
+	{
+		if(punch_cooldown)punch_cooldown --;
+		super.doeffect();
+	}
+	
+	states
+	{
+		spawn:
+			tnt1 a 0;
+			stop;
+		pickup:
+			tnt1 a 1 {invoker.punch_cooldown = 0;}
+			stop;
+		use:
+			tnt1 a 0 {
+				if(invoker.punch_cooldown) return;
+				
+				bool do_punch = false;
+				int layer = -7;
+				
+				while ( !do_punch && layer > -120)
+				{
+					layer --;
+					do_punch = a_overlay( layer, "punch", true);
+				}
+				if (do_punch) invoker.punch_cooldown = 24;
+			}
+			fail;
+			
+		punch:
+			chph ab 1;
+			chph c 3 
+			{
+				a_spawnitem("parry_box");
+				/*
+				Int punch_damage = CountInv("PowerStrength")>0 ? 150 : 65; 
+				A_CustomMeleeAttack(punch_damage, "robots/punch", "robots/misspunch", "melee", true);
+				*/
+				
+			}
+			
+			chph d 1;
+			chph e 3;
+			stop;
+	}
+}
+
+class parry_box : actor
+{
+	default
+	{
+	Radius 40;
+	Height 56;
+	PainChance 256;
+	+NOINTERACTION;
+	+SHOOTABLE;
+	+NODECAL;
+	+NOGRAVITY;
+	+NOTELEPORT;
+	+FLOORCLIP;
+    +FRIENDLY;
+	+INVULNERABLE;
+	+NOBLOOD;
+	+REFLECTIVE;
+	+AIMREFLECT;
+	}
+	States
+	{
+	Spawn:
+		TNT1 A 3;
+		Goto Death;
+	Pain:
+		TNT1 A 0 A_playsound("world/Parry",5,1);
+		Goto Death;
+	Death:
+		TNT1 A 0;
+		Stop;
+	}
+}
+
 class Cy_orbitary_saw : weapon_base { Default { Tag "Motosierra Orbital"; } States { Spawn: TNT1 A -1; Stop; Select: TNT1 A 1 A_Raise; Loop; Deselect: TNT1 A 1 A_Lower; Loop; Ready: TNT1 A 1 A_WeaponReady; Loop; Fire: TNT1 A 1; Goto Ready; } }
 class Cy_Rifle : weapon_base REPLACES PISTOL
 {
@@ -16,6 +109,7 @@ class Cy_Rifle : weapon_base REPLACES PISTOL
 		+WEAPON.WIMPY_WEAPON
 		Inventory.Pickupmessage "$PICKUP_PISTOL_DROPPED";
 		Tag "$TAG_PISTOL";
+		Attacksound "rifle/fire";
 	}
 	States
 	{
@@ -29,9 +123,30 @@ class Cy_Rifle : weapon_base REPLACES PISTOL
 		PISG A 1 A_Raise;
 		Loop;
 	Fire:
-		PISF A 2 BRIGHT A_FirePistol;
-		PISG CD 1;
-		pisg e 2 a_fireprojectile("RifleCaseSpawn",1,0,6,0);
+		PISF A 2 BRIGHT { 
+			A_Firebullets(5.6,2.7,1,random(5,8));
+			a_fireprojectile("gun_smoke_spawner",0,0,0,-1,0,0);
+			a_zoomfactor(1,ZOOM_INSTANT);
+			a_light1();
+		}
+		PISG C 1
+		{
+			a_zoomfactor(0.994,zoom_instant);
+			a_setpitch(pitch-0.2);
+			a_setangle(angle + frandom(-0.2,0.2));
+			a_light0();
+		}
+		pisg D 1
+		{	
+			a_zoomfactor(0.996);
+			a_setpitch(pitch-0.2);
+		}
+		pisg e 2 
+		{
+			a_fireprojectile("RifleCaseSpawn",1,0,6,0);
+			a_zoomfactor(1.0);
+			a_setpitch(pitch+0.4);
+		}
 		PISG B 4 A_ReFire;
 		Goto Ready;
 
@@ -68,7 +183,7 @@ class Cy_pump_shotgun : weapon_base replaces shotgun
 		SHTf A 4 BRIGHT A_FireShotgun;
 		shtf b 3;
 		SHTG BC 5;
-		SHTG D 4 a_fireprojectile("shotguncasespawn",1,0,6,0);
+		SHTG D 4 a_fireprojectile("shotgun_case_spawn",1,0,6,0);
 		SHTG CB 5;
 		SHTG A 6;
 		SHTG A 7 A_ReFire;
@@ -106,14 +221,14 @@ class Cy_Dual_shotgun : weapon_base
 	fire_R:
 		sht4 b 4 BRIGHT A_FireShotgun();
 		sht4 cde 3;
-		sht4 f 5 a_fireprojectile("shotguncasespawn",1,0,6,0);
+		sht4 f 5 a_fireprojectile("shotgun_case_spawn",1,0,6,0);
 		sht4 g 4;
 		sht4 a 1 a_refire("fire_L");
 		goto ready;
 	fire_L:
 		sht4 h 4 BRIGHT A_FireShotgun();
 		sht4 ijk 3;
-		sht4 l 5 a_fireprojectile("shotguncasespawn",1,0,6,0);
+		sht4 l 5 a_fireprojectile("shotgun_case_spawn",1,0,6,0);
 		sht4 m 4;
 		sht4 a 1 A_ReFire("fire_R");
 		goto ready;
@@ -124,7 +239,103 @@ class Cy_Dual_shotgun : weapon_base
 	}
 }
 
-class Cy_Super_shotgun : weapon_base replaces supershotgun
+class cy_super_shotgun : weapon_base replaces supershotgun
+{
+	Default
+	{
+		Weapon.SelectionOrder 400;
+		Weapon.AmmoUse 2;
+		Weapon.AmmoGive 8;
+		Weapon.AmmoType "shotgun_shell";
+		Inventory.PickupMessage "$GOTSHOTGUN2";
+		Obituary "$OB_MPSSHOTGUN";
+		Tag "$TAG_SUPERSHOTGUN";
+	}
+	states
+	{
+	select:
+		tnt1 a 0 a_raise();
+		wait;
+	deselect:
+		tnt1 a 0 a_lower2();
+		wait;
+		
+	ready: //true select
+		csg3 ab 1;
+		csg3 c 3;
+		csg3 de 2;
+		goto actuallyready;
+	actuallyready:
+		csg3 f 1 a_weaponready(wrf_allowreload);
+		loop;
+		
+	fire:
+		tnt1 a 0 a_jumpifinventory("supershotgun_ammo",2,1);
+		goto reload;
+		csg3 k 1 bright
+		{
+			a_firebullets(11.5,7.5,16,random(5,8));
+			a_zoomfactor(1);
+			a_takeinventory("supershotgun_ammo",2);
+		}
+		csg3 m 1
+		{
+			a_zoomfactor(0.85);
+			a_setpitch(pitch-3);
+		}
+		csg3 n 1 
+		{
+			a_setpitch(pitch-2);
+			a_zoomfactor(1);
+		}
+		csg3 o 1 a_setpitch(pitch+2);
+		csg3 f 1 a_setpitch(pitch+3);
+		tnt1 a 0 a_jumpifinventory("shotgun_shell",1,1);
+		goto no_ammo;
+		goto reload;
+	
+	reload:
+		tnt1 a 0 a_jumpifinventory("shotgun_shell",1,1);
+		goto no_ammo;
+		tnt1 a 0 a_jumpifinventory("supershotgun_ammo",2,"just_reload");
+		csg3 p 2;
+		csg3 q 4;
+		csg3 rs 1;
+		csg3 t 2 a_fireprojectile("shotgun_case_spawn",-3,0,10,-3);
+		csg3 u 2;
+		csg3 v 4
+		{
+			a_takeinventory("shotgun_shell",2);
+			a_giveinventory("supershotgun_ammo",2);
+		}
+		csg3 w 3;
+		csg3 ji 1;
+		csg3 h 3;
+		csg3 gf 1;
+		tnt1 a 0 a_refire("fire");
+		goto actuallyready;
+		
+	just_reload:
+		csg3 g 1;
+		csg3 h 3;
+		csg3 ij 2;
+		csg3 k 15;
+		csg3 ij 2;
+		csg3 h 5;
+		csg3 g 1;
+		goto actuallyready;
+		
+	no_ammo:
+		csg3 f 1 a_print("$no_ammo",1,"smallfont");
+		goto actuallyready;
+		
+	spawn:
+		I3SS A -1;
+		Stop;
+	}
+}
+
+class old_Cy_Super_shotgun : weapon_base
 {
 	Default
 	{
@@ -242,7 +453,7 @@ class Cy_Advanced_shotgun : Cy_pump_shotgun
 		SHT5 B 4 BRIGHT A_FireShotgun;
 		sht5 C 3;
 		SHT5 DE 5;
-		SHT5 F 4 a_fireprojectile("shotguncasespawn",1,0,6,0);
+		SHT5 F 4 a_fireprojectile("shotgun_case_spawn",1,0,6,0);
 		SHT5 ED 5;
 		SHT5 A 6;
 		SHT5 A 7 A_ReFire;
@@ -407,7 +618,40 @@ class Cy_RPG_69 : weapon_base replaces RocketLauncher
 		Stop;
 	}
 }
-class Cy_Lazergun : weapon_base { Default { Tag "Fusil Laser"; } States { Spawn: TNT1 A -1; Stop; Select: TNT1 A 1 A_Raise; Loop; Deselect: TNT1 A 1 A_Lower; Loop; Ready: TNT1 A 1 A_WeaponReady; Loop; Fire: TNT1 A 1; Goto Ready; } }
+class Cy_Lazergun : weapon_base REPLACES plasmarifle
+{
+	Default
+	{
+		Weapon.SelectionOrder 100;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoGive 40;
+		Weapon.AmmoType "lazer_ammo";
+		Inventory.PickupMessage "$GOTPLASMA";
+		Tag "$TAG_PLASMARIFLE";
+	}
+	States
+	{
+	Ready:
+		lz40 A 1 A_WeaponReady();
+		Loop;
+	Deselect:
+		lz40 A 1 A_Lower();
+		wait;
+	Select:
+		lz40 A 1 A_Raise();
+		Loop;
+	Fire:
+		lz40 b 1 bright A_FirePlasma();
+		lz40 cd 2;
+		lz40 e 8 A_ReFire();
+		lz40 fe 8;
+		Goto Ready;
+	Spawn:
+		i3lz A -1;
+		Stop;
+	}
+}
+
 class Cy_Lazorgun : weapon_base { Default { Tag "Lanzador BFG 7000"; } States { Spawn: TNT1 A -1; Stop; Select: TNT1 A 1 A_Raise; Loop; Deselect: TNT1 A 1 A_Lower; Loop; Ready: TNT1 A 1 A_WeaponReady; Loop; Fire: TNT1 A 1; Goto Ready; } }
 class Cy_nuke_launcher : weapon_base { Default { Tag "Lanzador Nuclear"; } States { Spawn: TNT1 A -1; Stop; Select: TNT1 A 1 A_Raise; Loop; Deselect: TNT1 A 1 A_Lower; Loop; Ready: TNT1 A 1 A_WeaponReady; Loop; Fire: TNT1 A 1; Goto Ready; } }
 

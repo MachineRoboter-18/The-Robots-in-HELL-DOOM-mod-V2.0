@@ -277,6 +277,7 @@ class Cyborg_Rodri_player : doomplayer replaces doomplayer
 		player.startitem "machinegun_ammo", 90;
 		player.startitem "lazergun_ammo", 30;
 		player.startitem "cy_hook_launcher", 1;
+		player.startitem "cy_punch", 1;
 		
 		scale 0.58;
 		player.crouchsprite "cyrs";
@@ -383,15 +384,19 @@ class Cyborg_Rodri_player : doomplayer replaces doomplayer
 	States
 	{
 	Spawn:
-		cyri A -1;
+		cwri A -1;
 		Loop;
 	See:
-		cyrw ABCD 4;
-		Loop;
+		cwrw ABCD 3;
+		goto spawn;
+		
+	
+	
 	Missile:
 		cyrf a 4 bright;
 		cyrf bcd 4;
 		Goto Spawn;
+
 	Melee:
 		cyrf d 6 ;
 		Goto Missile;

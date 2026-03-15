@@ -54,11 +54,23 @@ added mechanics and balance
 
 actual version of mod V2.0 alpha 1-02 0008
 
-#0007 (20/2/2026)
+#0009 (20/2/2026)
 added FX
 	*Added ground-slam sound and visual effect
 	*added slide sound
 	*added players.zsc documentation
+
+#0010 (14/3/2026)
+firts march update LOL
+	Added:
+	better rifle MX-R16 FX and fire sound
+	add gun_smoke and his spawners
+	add a one bad attemp to upgrade te imp AI
+	add the casings sound
+	add the lazergun call it LZ-400 uses the lazer_ammo witch is a gian duracell batery
+	added a sertains cyborg rodri player sprites that maybe i use in a one time, probably this srpites was been deleted later
+	some others updates come in earlier in 1 weel i hope
+
 
 **** HISTORICAL CHANGELOG ****
 History of "Cyborg Rodri Mod" evolving into "The Robots in HELL" (TRH).

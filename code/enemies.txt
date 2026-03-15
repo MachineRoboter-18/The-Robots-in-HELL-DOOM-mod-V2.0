@@ -457,3 +457,194 @@ class obliterated_rifle : obliterated replaces ZombieMan
 		stop;
 	}
 }
+
+class TRH_imp : actor
+{
+	default
+	{
+		health 75;
+		speed 10;
+		height 56;
+		radius 19;
+		mass 100;
+		monster;
+		+floorclip;
+		+PUSHABLE;
+		+JUMPDOWN;
+		+FORCEINFIGHTING;
+		+COUNTKILL;
+	}
+	
+	action void a_imp_chase(double max_melee_range = 64, double min_fire_range = 96, double max_fire_range = 512, double min_jump_distance = 48, double max_jump_distance = 128, bool can_jump = true)
+	{
+		double distXY = Distance2D(target);
+		double distZ = pos.z - target.pos.z;
+		
+		/*
+		ahora lo que sigue es:
+			*1 verifica si esta en el rango de disparo (si es true intentara disparar)
+			*2 verifica si puede saltar si la distZ es mayor a 48 y menor a 128. esto lo podemos manejar gracias a las 2 variables double definidas en la funcion (claro esta si el bool de can_jump es true sino obvia este if)
+			la 2 fue desabilitada gracias a la bandera JUMPDOWN
+			*3 verifica si esta en el rango de ataque a melee (si es correcto intentara atacar a melee pero si falla y esta a menos de el minimo del rango de disparo procedera a pegar un pequeño dash hacia adelante)
+		*/
+		if (!target)
+		{
+			setstatelabel("see");
+			return;
+		}
+		
+		if (checksight(target)) //es fundamental porque sino el imp atacaria a la nada, esto aplica si a lo que ataca es tanto jugador como monstruo
+		{
+			if((distXY >= min_fire_range) && (distXY <= max_fire_range)) //prioridad 1, ante cualquier situacion el imp intentara ser una torreta de proyectiles
+			{
+				setstatelabel("missile");
+				return;
+			}
+			/*
+			if(can_jump && (distZ >= min_jump_distance) && (distZ <= max_jump_distance)) //prioridad 2, si llega a pasar que la distancia vertical del target esta entre estos 2 valores entonces el imp intentara saltar hacia su objetivo
+			{
+				setstatelabel("jump");
+				return;
+			}
+			*/
+			if(distXY <= max_melee_range) //esto es una verificacion, por si luego de saltar las anteriores 2 verificaciones if dan false el imp se preguntara si puede atacar a melee
+			{
+				setstatelabel("melee");
+				return;
+			}
+			if((distXY >= max_melee_range) && (distXY <= min_fire_range)) //si la anterior verificacion falla por que el jugador esta exactamente en este pequeño valle bacio el imp intentara hacer un dash para intentar acercarse al jugador, esto a efectos practicos nunca o casi nunca funcionara ya que se supone que el jugador se mueve constantemente asi que si logra hacer un dash el imp inmediatamente debera o disparar haciendo su respectiva verificacion o atacar a melee
+			{
+				setstatelabel("dash");
+				return;
+			}
+		}
+		a_chase(); //si todo lo demas falla hace el a_chase con normalidad
+	}
+	
+	action void a_imp_aftershot(bool can_retreat = true, bool can_repositioning = false, double repositioning_range = 256, double retreat_range = 128 ,double max_melee_range = 64 , double min_fire_range = 65, double max_fire_range = 512 )
+	{
+		/*
+			en esta funcion se hace mas o menos lo mismo salvo el hecho de que verifica los valores de nuevo para tomar una decision, ademas que cuenta con casi las mismas variables que la funcion anterior.
+		*/
+		double distXY = Distance2D(target);
+		
+		if (checksight(target))
+		{
+			if( can_repositioning && (distXY >= repositioning_range))
+			{
+				setstatelabel("repositioning");
+				return;
+			}
+			if( can_retreat && (distXY <= retreat_range) && (distXY >= max_melee_range))
+			{
+				setstatelabel("retreat");
+				return;
+			}
+			if( (distXY >= min_fire_range) && (distXY <= max_fire_range))
+			{
+				setstatelabel("missile");
+				return;
+			}
+		}
+		SetStateLabel("see");
+		return;
+	}
+	
+	action bool a_check_floor_repositioning(double angle_to_rotate = 45, double dist = 64)
+	{
+		vector2 checkpos = vec2angle(dist, angle + angle_to_rotate);
+		
+		if(checkmove(checkpos))
+		{
+			return true;
+		}
+		return false;
+	}
+	action bool a_check_floor_retreat(double dist = 48)
+	{
+		vector2 backpos = vec2angle(-dist, angle);
+		
+		if (checkmove(backpos))
+		{
+		return true;
+		}
+		return false;
+	}
+	
+	states
+	{
+	Spawn:
+		TROO AB 10 A_Look;
+		Loop;
+	See:
+		TROO AABBCCDD 3 a_imp_chase();
+		Loop;
+	Melee:
+	Missile:
+		TROO EF 8 A_FaceTarget;
+		TROO G 5 A_TroopAttack ;
+		troo e 1 a_imp_aftershot();
+		Goto See;
+		
+	retreat:
+		troo a 1 A_FaceTarget();
+		troo a 0{
+			if(a_check_floor_retreat()){ return resolvestate("null");}
+			else { return resolvestate("see"); }
+		}
+		troo ba 3 a_recoil(2);
+		goto see;
+		
+	repositioning:
+		troo a 2 A_FaceTarget();
+		troo a 0{
+			double new_angle = randompick(-90,90);
+			if(a_check_floor_repositioning(new_angle, 64)){ a_setangle(angle + new_angle); return resolvestate("null");}
+			else {return resolvestate("see");}
+			
+		}
+		troo abab 4 a_recoil(-3);
+		goto see;
+		
+		
+	/*//desabilitado por bandera JUMPDOWN	
+	jump:
+		troo n 8 {
+			vel.z = 6;
+			vector2 direction = angletovector(angle, 2.0);
+			vel.x = direction.x;
+			vel.y = direction.y;
+		}
+		troo hhhh 8;
+		goto see;
+	*/	
+	dash:
+		troo a 2 A_FaceTarget();
+		troo b 6 a_recoil(-5);
+		goto see;
+		
+	Pain:
+		TROO H 2;
+		TROO H 2 A_Pain;
+		Goto See;
+	Death:
+		TROO I 8;
+		TROO J 8 A_Scream;
+		TROO K 6;
+		TROO L 6 A_NoBlocking;
+		TROO M -1;
+		Stop;
+	XDeath:
+		TROO N 5;
+		TROO O 5 A_XScream;
+		TROO P 5;
+		TROO Q 5 A_NoBlocking;
+		TROO RST 5;
+		TROO U -1;
+		Stop;
+	Raise:
+		TROO ML 8;
+		TROO KJI 6;
+		Goto See;
+	}
+}

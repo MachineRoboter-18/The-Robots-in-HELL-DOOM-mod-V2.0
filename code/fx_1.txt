@@ -74,8 +74,8 @@ class balavacia : Actor
         +THRUACTORS
         Mass 0;
         BounceFactor 0.3;
-        DeathSound "weapons/casing";
-        BounceSound "weapons/casing";
+        DeathSound "casings/rifle";
+        BounceSound "casings/rifle";
     }
 
     States
@@ -195,7 +195,7 @@ class cartuchovacio : Actor
 }
 
 // Generador de casquillos de Escopeta
-class shotgunCaseSpawn : Actor
+class shotgun_Case_Spawn : Actor
 {
     Default
     {
@@ -211,4 +211,103 @@ class shotgunCaseSpawn : Actor
         TNT1 A 1 A_SpawnItemEx("cartuchovacio", 1, 0, 0, random(-8, -10), 0, random(4, 8), random(-80, -100));
         Stop;
     }
+}
+
+class gun_smoke : actor
+{
+	default
+	{
+		+NOGRAVITY;
+		+NOBLOCKMAP;
+		+FLOORCLIP;
+		+FORCEXYBILLBOARD;
+		+NOINTERACTION;
+		+FORCEXYBILLBOARD;
+		+MISSILE;
+		Speed 1;
+		RenderStyle "Add";
+		Alpha 0.8;
+		+CLIENTSIDEONLY;
+		Radius 0;
+		Height 0;
+		Scale 0.3;
+	}
+	states
+	{
+	spawn:
+		SMKA ABCDEFGHIJK 1 A_FadeOut(0.004);
+		stop;
+	}
+}
+class gun_smoke_shotguns : gun_smoke
+{
+	default
+	{
+		scale 0.4;
+	}
+}
+class gun_smoke_machineguns : gun_smoke
+{
+	default
+	{
+		scale 0.2;
+	}
+}
+class gun_smoke_rocket_launcher : gun_smoke
+{
+	default
+	{
+		scale 0.5;
+	}
+}
+class gun_smoke_spawner : actor
+{
+	default
+	{
+		Speed 17.5;
+		+NOCLIP;
+		+NOINTERACTION;
+		+DONTSPLASH;
+	}
+	States
+	{
+	Spawn:
+		TNT1 A 1;
+		TNT1 A 0 Thing_ChangeTID(0,390);
+		TNT1 AA 0 a_spawnprojectile("Gun_Smoke", 0, 0, random (0, 360), 2, random (0, 180));
+        Stop;
+	}
+}
+class gun_smoke_spawner_shotgun : gun_smoke_spawner
+{
+	states
+	{	
+	Spawn:
+		TNT1 A 1;
+		TNT1 A 0 Thing_ChangeTID(0,390);
+		TNT1 AA 0 a_spawnprojectile("gun_smoke_shotguns", 0, 0, random (0, 360), 2, random (0, 180));
+        Stop;
+	}
+}
+class gun_smoke_spawner_machineguns : gun_smoke_spawner
+{
+	states
+	{
+	Spawn:
+		TNT1 A 1;
+		TNT1 A 0 Thing_ChangeTID(0,390);
+		TNT1 AA 0 a_spawnprojectile("gun_smoke_machineguns", 0, 0, random (0, 360), 2, random (0, 180));
+        Stop;
+	}
+}
+class gun_smoke_spawner_rocket_launcher : gun_smoke_spawner
+{
+	states
+	{
+	Spawn:
+		TNT1 A 1;
+		TNT1 A 0 Thing_ChangeTID(0,390);
+		TNT1 AA 0 a_spawnprojectile("gun_smoke_rocket_launcher", 0, 0, random (0, 360), 2, random (0, 180));
+        Stop;
+	}
 }

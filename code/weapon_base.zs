@@ -533,6 +533,13 @@ class shotgun_ammo : ammo
 		inventory.maxamount 8;
 	}
 }
+class supershotgun_ammo : ammo
+{
+	default
+	{
+		inventory.maxamount 2;
+	}
+}
 class dual_shotgun_ammo : ammo
 {
 	default

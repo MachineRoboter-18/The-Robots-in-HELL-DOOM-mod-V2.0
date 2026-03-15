@@ -53,3 +53,16 @@ oblss11 "sounds/npc/obliterateds/ZSPSIT11"
 Ground_Slam_SFX "sounds/players/movement-sistem/ground_slam.ogg"
 $limit Ground_Slam_SFX 2
 Slide "sounds/players/movement-sistem/slide.ogg"
+
+
+//weapons
+//casings
+$random casings/rifle {rifle_casing_1 rifle_casing_2 rifle_casing_3}
+rifle_casing_1 "sounds/weapons/casings/rifle_casing_1.ogg"
+rifle_casing_2 "sounds/weapons/casings/rifle_casing_2.ogg"
+rifle_casing_3 "sounds/weapons/casings/rifle_casing_3.ogg"
+//mx-r16
+$random rifle/fire {rifle_fire_1 rifle_fire_2 rifle_fire_3}
+rifle_fire_1 "sounds/weapons/rifles/mx-r16/mx-r16_fire1.ogg"
+rifle_fire_2 "sounds/weapons/rifles/mx-r16/mx-r16_fire2.ogg"
+rifle_fire_3 "sounds/weapons/rifles/mx-r16/mx-r16_fire3.ogg"
