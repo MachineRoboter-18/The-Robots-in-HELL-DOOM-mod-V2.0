@@ -245,6 +245,12 @@ class gun_smoke_shotguns : gun_smoke
 	{
 		scale 0.4;
 	}
+	states
+	{
+	spawn:
+		SMKA ABCDEFGHIJK 3 A_FadeOut(0.004);
+		stop;
+	}
 }
 class gun_smoke_machineguns : gun_smoke
 {

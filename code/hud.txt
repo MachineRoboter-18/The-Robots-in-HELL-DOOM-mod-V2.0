@@ -1,0 +1,66 @@
+class MachineR18_HUD : BaseStatusBar
+{
+    override void Init()
+    {
+        Super.Init();
+        SetSize(0, 320, 200);
+    }
+
+    override void Draw(int state, double TickPercent)
+    {
+        Super.Draw(state, TickPercent);
+
+        if (state == HUD_StatusBar || state == HUD_Fullscreen)
+        {
+            // --- FUENTES Y ESTADOS (Locales, no de clase) ---
+            // Las pedimos cada vez que dibujamos. LZDoom las tiene en cache, no va a laguear.
+            HUDFont mFont = HUDFont.Create("HUDFONT_DOOM");
+            InventoryBarState dipar = InventoryBarState.Create();
+
+            // --- DIBUJO ---
+
+            // Cara
+            DrawTexture(GetMugShot(5), (3, -34), DI_ITEM_OFFSETS);
+            
+            // Vida (Usamos la fuente local mFont)
+            if (CPlayer && CPlayer.mo) 
+            {
+                DrawString(mFont, FormatNumber(CPlayer.mo.Health, 3), (44, -25));
+            }
+
+            // Armadura
+            let armr = CPlayer.mo.FindInventory("BasicArmor");
+            if (armr != null && armr.Amount > 0)
+            {
+                DrawInventoryIcon(armr, (20, -35));
+                DrawString(mFont, FormatNumber(armr.Amount, 3), (44, -51));
+            }
+
+            // Munición
+            Inventory am1, am2;
+            [am1, am2] = GetCurrentAmmo();
+            if (am1 != null)
+            {
+                DrawInventoryIcon(am1, (-14, -4));
+                DrawString(mFont, FormatNumber(am1.Amount, 3), (-30, -20), DI_TEXT_ALIGN_RIGHT);
+            }
+
+            // Llaves (Bucle simplificado)
+            Vector2 kpos = (-10, 2);
+            for (let i = CPlayer.mo.Inv; i != null; i = i.Inv)
+            {
+                if (i is "Key" && i.Icon.IsValid())
+                {
+                    DrawTexture(i.Icon, kpos, DI_SCREEN_RIGHT_TOP | DI_ITEM_LEFT_TOP);
+                    kpos.Y += 10; // Desplazamiento simple para evitar fallos de TexMan
+                }
+            }
+
+            // --- EFECTO DE GLITCH (El alma de Machine R-18) ---
+            float aP = (CPlayer.mo.Health < 50) ? FRandom(0.1, 0.3) : 0.04 + (0.05 * sin(Level.time * 6));
+            Vector2 gP = (160.0 + FRandom(-2.0, 2.0), 100.0 + FRandom(-1.0, 1.0));
+            
+            DrawImage("FXABERR", gP, DI_ITEM_CENTER, aP);
+        }
+    }
+}

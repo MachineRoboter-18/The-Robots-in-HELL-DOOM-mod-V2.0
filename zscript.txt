@@ -1,3 +1,4 @@
+#include "code/hud.txt"
 #include "code/weapon_base.zs"
 #include "code/proyectile.txt"
 #include "code/weapons_placeholder.txt"

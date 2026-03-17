@@ -1,0 +1,5 @@
+gameinfo
+{
+	titlepage = "TITLEPIC"
+	titlemusic = "$MUSIC_DM2TTL"
+}

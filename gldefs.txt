@@ -1,0 +1,29 @@
+// 1. DEFINIR LA LUZ DINÁMICA
+// Creamos una point light (luz puntual) con efecto de pulso.
+pulselight energon_core_light
+{
+    color 0.0 0.8 1.0       // Un azul cian eléctrico (R, G, B de 0.0 a 1.0)
+    size 28                 // Tamaño base de la luz en el piso/paredes
+    secondarySize 32        // Tamaño máximo del pulso
+    interval 0.5            // Velocidad del pulso (segundos)
+    offset 0 24 0           // Levantar la luz 24 unidades del centro del sprite
+}
+
+// 2. VINCULAR LA LUZ AL ACTOR
+// Aquí le decimos al motor: "Cuando aparezca esta clase, ponele esta luz".
+object energon_core
+{
+    frame I5So      // Aplica a todos los frames que empiecen con I5S (i5so a,b,c,d)
+    {
+        light energon_core_light  // Vinculamos la luz puntual
+    }
+}
+
+pulselight super_energon_core_light
+{
+	color 0.0 0.1 1.0       // Un azul cian eléctrico (R, G, B de 0.0 a 1.0)
+    size 26                 // Tamaño base de la luz en el piso/paredes
+    secondarySize 30        // Tamaño máximo del pulso
+    interval 0.2            // Velocidad del pulso (segundos)
+    offset 0 24 0 
+}

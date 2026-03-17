@@ -61,8 +61,28 @@ $random casings/rifle {rifle_casing_1 rifle_casing_2 rifle_casing_3}
 rifle_casing_1 "sounds/weapons/casings/rifle_casing_1.ogg"
 rifle_casing_2 "sounds/weapons/casings/rifle_casing_2.ogg"
 rifle_casing_3 "sounds/weapons/casings/rifle_casing_3.ogg"
+$volume casings/rifle 0.6
 //mx-r16
 $random rifle/fire {rifle_fire_1 rifle_fire_2 rifle_fire_3}
 rifle_fire_1 "sounds/weapons/rifles/mx-r16/mx-r16_fire1.ogg"
 rifle_fire_2 "sounds/weapons/rifles/mx-r16/mx-r16_fire2.ogg"
 rifle_fire_3 "sounds/weapons/rifles/mx-r16/mx-r16_fire3.ogg"
+$volume rifle/fire 0.75
+//pump shotgun
+$random pshotgun/fire {pshotgun_fire_1 pshotgun_fire_2 pshotgun_fire_3}
+pshotgun_fire_1 "sounds/weapons/shotguns/pump_shotgun/pshotgun_fire_1.ogg"
+pshotgun_fire_2 "sounds/weapons/shotguns/pump_shotgun/pshotgun_fire_2.ogg"
+pshotgun_fire_3 "sounds/weapons/shotguns/pump_shotgun/pshotgun_fire_3.ogg"
+pshotgun/pump_in "sounds/weapons/shotguns/pump_shotgun/pshotgun_pump_in.ogg"
+pshotgun/pump_out "sounds/weapons/shotguns/pump_shotgun/pshotgun_pump_out.ogg"
+//super shotgun
+Sshotgun/fire "sounds/weapons/shotguns/super_shotgun/Sshotgun_fire.ogg"
+Sshotgun/open "sounds/weapons/shotguns/super_shotgun/Sshotgun_open.ogg"
+Sshotgun/load "sounds/weapons/shotguns/super_shotgun/Sshotgun_load.ogg"
+Sshotgun/close "sounds/weapons/shotguns/super_shotgun/Sshotgun_close.ogg"
+$volume Sshotgun/fire 0.95
+//machinegun
+mg47/fire "sounds/weapons/machineguns/mg-47_fire.ogg"
+$volume mg47/fire 0.8
+
+
