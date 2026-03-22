@@ -97,3 +97,11 @@ class RPG69_missile : new_rocket
 		Stop;
 	}
 }
+
+class ghost_range_attack : doomimpball
+{
+	default
+	{
+		damage 0;
+	}
+}

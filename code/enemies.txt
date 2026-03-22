@@ -285,7 +285,7 @@ class obliterated_shotgun : obliterated replaces ShotgunGuy
 		speed 12;
 		fastspeed 13;
 		monster;
-		scale 0.56;
+		scale 0.57;
 		tag "shotguner obliterated";
 		PainSound "OBL_pain";
 		DeathSound "OBL_death";
@@ -345,7 +345,9 @@ class obliterated_shotgun : obliterated replaces ShotgunGuy
 	actuallymissile:
 		obsf a 8 bright A_SposAttackUseAtkSound();
 		obsf b 5;
-		obsg aba 4;
+		obsg a 4;
+		obsg b 4 a_spawnprojectile("shotgun_case_spawn");
+		obsg a 4;
 		obsu b 2 OBLaftershot(150,160,280,false);
 		goto see;
 		
@@ -455,6 +457,101 @@ class obliterated_rifle : obliterated replaces ZombieMan
 		obrd c 6{ a_spawnitemex("rifle_bullet_clip",0,0,8,0,0,0,0,SXF_NOCHECKPOSITION,0); a_spawnitemex("rifle_bullets",0,0,8,0,0,0,0,sxf_nocheckposition, 160);}
 		obrd d -1;
 		stop;
+	}
+}
+
+class ghost_alucination : doomimp
+{
+	const ghost_max_range = 650.0;
+	const ghost_tp_check_freq = 70;
+	int dist_check_timer;
+	
+	default{
+		
+		+NODROPOFF
+        +NOBLOOD
+        +NOTARGET
+        +DONTRIP
+        +NOICEDEATH
+        -COUNTKILL
+		+lookallaround
+		-CANPUSHWALLS
+		-CANUSEWALLS
+		-ACTIVATEMCROSS
+		-ACTIVATEPCROSS
+		-NOTELESTOMP
+		-NOBLOCKMONST
+		+THRUACTORS
+		
+		health 1;
+        speed 6;
+        mass 1;
+		
+        renderstyle "Shadow";
+	}
+	
+	override void Tick()
+    {
+        Super.Tick();
+        if (isFrozen()) return;
+        
+        // Chequear distancia al jugador cada GHOST_CHECK_FREQ ticks
+        dist_check_timer++;
+        if (dist_check_timer >= ghost_tp_check_freq)
+        {
+            dist_check_timer = 0;
+            ghost_check_distance();
+        }
+    }
+    
+    void ghost_check_distance()
+    {
+        Actor target_player = players[0].mo;
+        if (!target_player) return;
+        
+        // Si está demasiado lejos, teleportarse cerca
+        if (Distance3D(target_player) > ghost_max_range)
+            ghost_teleport(target_player);
+    }
+    
+    void ghost_teleport(Actor target_player)
+    {
+        // Intentar hasta 8 posiciones aleatorias cerca del jugador
+        for (int attempt = 0; attempt < 8; attempt++)
+        {
+            double rand_angle = frandom(0.0, 360.0);
+            double rand_dist  = frandom(256.0, 512.0);
+            
+            vector3 new_pos;
+            new_pos.x = target_player.pos.x + cos(rand_angle) * rand_dist;
+            new_pos.y = target_player.pos.y + sin(rand_angle) * rand_dist;
+            new_pos.z = target_player.pos.z;
+            
+            if (TeleportMove(new_pos, true))
+            {
+                A_Face(target_player);
+                // Efecto visual de aparición — flash de humo o partícula
+                A_SpawnItemEx("TeleportFog", 0, 0, 0, 0, 0, 0, 0,
+                              SXF_NOCHECKPOSITION);
+                return;
+            }
+        }
+        // Si los 8 intentos fallaron destruirse para no quedar flotando
+        Destroy();
+    }
+	
+	states{
+		melee:
+		missile:
+			TROO EF 8 A_FaceTarget;
+			TROO G 5 A_spawnprojectile("ghost_range_attack");
+			Goto See;
+		death:
+			tnt1 a 0;
+			stop;
+		xdeath:
+			tnt1 a 0;
+			stop;
 	}
 }
 

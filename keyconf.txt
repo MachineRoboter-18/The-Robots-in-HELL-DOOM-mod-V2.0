@@ -17,3 +17,5 @@ addmenukey "hook" hook_action
 alias hook_action "use cy_hook_launcher"
 defaultbind G hook_action
 addmenukey "grenade" "use cy_grenade"
+addmenukey "Test Sanity", "+user1"
+defaultbind q "+user1"

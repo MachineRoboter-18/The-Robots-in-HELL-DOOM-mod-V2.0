@@ -205,7 +205,7 @@ class Cy_pump_shotgun : weapon_base replaces shotgun
 		SHTG B 1 a_setpitch(pitch+1);
 		SHTG B 1 a_setpitch(pitch+1);
 		SHTG B 1 a_setpitch(pitch+1);
-		shtg C 5a_playsound("pshotgun/pump_in",chan_auto,1);
+		shtg C 5 a_playsound("pshotgun/pump_in",chan_auto,1);
 		SHTG D 4 a_fireprojectile("shotgun_case_spawn",1,0,6,0);
 		SHTG C 5 a_playsound("pshotgun/pump_out",chan_auto,1);
 		shtg B 5;

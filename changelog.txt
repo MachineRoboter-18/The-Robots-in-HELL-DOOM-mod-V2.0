@@ -80,6 +80,16 @@ second march upate
 	*added a menus custon sprites like de M_DOOM lump and custom DOOMCURSOR
 	*modified the hud of LZdoom, now the hud has more colorfull colors in te numbers and the keys icons switch to right up cornert to up of armor icon
 
+#0012 (22/3/26)
+third march update
+	added:
+	*credit image for doom
+	*a new enemy: ghost_alucination, this i will use in a new update. this enemy is a shadow imp that have 1hp and has no damage on player
+	*attack sound for obliterated shotgun
+	eliminated:
+	*super shotgun v2 sprites
+
+
 **** HISTORICAL CHANGELOG ****
 History of "Cyborg Rodri Mod" evolving into "The Robots in HELL" (TRH).
 
